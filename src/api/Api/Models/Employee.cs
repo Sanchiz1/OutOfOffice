@@ -9,4 +9,5 @@ public class Employee
     public required string Status { get; set; }
     public int PeoplePartner { get; set; }
     public int OutOfOfficeBalance { get; set; }
+    public required string Password { get; set; }
 }

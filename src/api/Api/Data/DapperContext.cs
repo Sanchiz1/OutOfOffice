@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using Api.Interfaces;
+using Dapper;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace Api.Data;

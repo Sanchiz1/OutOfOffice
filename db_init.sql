@@ -16,7 +16,8 @@ CREATE TABLE Employees (
     Subdivision NVARCHAR(Max) NOT NULL,
     Status NVARCHAR(50) NOT NULL,
     PeoplePartner INT FOREIGN KEY REFERENCES Employees(Id) NOT NULL,
-    OutOfOfficeBalance INT NOT NULL
+    OutOfOfficeBalance INT NOT NULL,
+    Password NVARCHAR(128) NOT NULL
 );
 
 CREATE TABLE LeaveRequests (
@@ -46,3 +47,12 @@ CREATE TABLE Projects (
     Comment NVARCHAR(MAX),
     Status NVARCHAR(50) NOT NULL
 );
+
+GO
+
+INSERT INTO Positions
+VALUES
+('Employee'),
+('HR Manager'),
+('Project Manager'),
+('Administrator')

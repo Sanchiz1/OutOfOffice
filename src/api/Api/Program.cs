@@ -1,12 +1,15 @@
-var builder = WebApplication.CreateBuilder(args);
+using Api.Data;
+using Api.Data.Repositories;
+using Api.Interfaces;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var app = builder.Build();
+builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddSingleton<IPositionRepository, PositionRepository>();
 
-// Configure the HTTP request pipeline.
+var app = builder.Build();
 
 app.UseHttpsRedirection();
 
