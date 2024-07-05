@@ -55,9 +55,23 @@ public class PositionRepository : IPositionRepository
         return result.FirstOrDefault();
     }
 
+    public async Task<Position?> GetByName(string name)
+    {
+        string query = $@"SELECT p.Id,
+                        p.Name
+                        FROM Positions p
+                        WHERE t.name = @name";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.QueryAsync<Position>(query, new { name });
+
+        return result.FirstOrDefault();
+    }
+
     public async Task<int> Add(Position position)
     {
-        string query = $@"INSERT INTO Employees
+        string query = $@"INSERT INTO Positions
                         (Name)
                         OUTPUT INSERTED.Id
                         VALUES

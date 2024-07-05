@@ -16,7 +16,7 @@ CREATE TABLE Employees (
     PositionId INT FOREIGN KEY REFERENCES Positions(Id) NOT NULL,
     Subdivision NVARCHAR(Max) NOT NULL,
     Status NVARCHAR(50) NOT NULL,
-    PeoplePartner INT FOREIGN KEY REFERENCES Employees(Id) NOT NULL,
+    PeoplePartner INT FOREIGN KEY REFERENCES Employees(Id),
     OutOfOfficeBalance INT NOT NULL,
     Password NVARCHAR(128) NOT NULL
 );

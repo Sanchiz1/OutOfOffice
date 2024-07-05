@@ -73,10 +73,10 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<int> Add(Employee employee)
     {
         string query = $@"INSERT INTO Employees
-                        (Fullname, PositionId, Subdivision, Status, PeoplePartner, OutOfOfficeBalance)
+                        (Fullname, Email, PositionId, Subdivision, Status, PeoplePartner, OutOfOfficeBalance, Password)
                         OUTPUT INSERTED.Id
                         VALUES
-                        (@Fullname, @PositionId, @Subdivision, @Status, @PeoplePartner, @OutOfOfficeBalance)";
+                        (@Fullname, @Email, @PositionId, @Subdivision, @Status, @PeoplePartner, @OutOfOfficeBalance, @Password)";
 
         using var connection = _dapperContext.CreateConnection();
 
@@ -89,7 +89,8 @@ public class EmployeeRepository : IEmployeeRepository
     {
         string query = $@"UPDATE Employees
                         SET
-                        Fullname @Fullname,
+                        Fullname = @Fullname,
+                        Email = @Email,
                         PositionId = @PositionId,
                         Subdivision = @Subdivision,
                         Status = @Status,

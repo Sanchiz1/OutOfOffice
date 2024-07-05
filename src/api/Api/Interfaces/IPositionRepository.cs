@@ -11,6 +11,8 @@ public interface IPositionRepository
 
     Task<Position?> GetById(int id);
 
+    Task<Position?> GetByName(string Name);
+
     Task<int> Add(Position position);
 
     Task Update(Position position);
