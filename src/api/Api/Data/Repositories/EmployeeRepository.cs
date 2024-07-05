@@ -1,9 +1,10 @@
-﻿using Api.Models;
+﻿using Api.Interfaces;
+using Api.Models;
 using Dapper;
 
 namespace Api.Data.Repositories;
 
-public class EmployeeRepository
+public class EmployeeRepository : IEmployeeRepository
 {
     private readonly DapperContext _dapperContext;
 

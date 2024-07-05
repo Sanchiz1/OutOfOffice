@@ -12,6 +12,7 @@ CREATE TABLE Positions (
 CREATE TABLE Employees (
     Id INT PRIMARY KEY IDENTITY(1, 1),
     FullName NVARCHAR(MAX) NOT NULL,
+    Email NVARCHAR(255) NOT NULL,
     PositionId INT FOREIGN KEY REFERENCES Positions(Id) NOT NULL,
     Subdivision NVARCHAR(Max) NOT NULL,
     Status NVARCHAR(50) NOT NULL,
@@ -47,12 +48,3 @@ CREATE TABLE Projects (
     Comment NVARCHAR(MAX),
     Status NVARCHAR(50) NOT NULL
 );
-
-GO
-
-INSERT INTO Positions
-VALUES
-('Employee'),
-('HR Manager'),
-('Project Manager'),
-('Administrator')
