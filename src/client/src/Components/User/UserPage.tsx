@@ -10,7 +10,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { DeleteUserRequest, requestEmployeeById, updateUserRequest, updateUserRoleRequest } from '../../API/userRequests';
+import { DeleteUserRequest, requestEmployeeById, updateUserRequest, updateUserRoleRequest } from '../../API/employeeRequests';
 import { RootState } from '../../Redux/store';
 import { Employee, UserInput } from '../../Types/Employee';
 import { BootstrapInput } from '../UtilComponents/BootstrapInput';
@@ -31,7 +31,7 @@ export default function UserPage() {
   const [role, setRole] = useState(1);
   const [userExists, setUserExists] = useState(true);
   const [openEdit, setOpenEdit] = useState(false);
-  let { UserId } = useParams();
+  let { EmployeeId } = useParams();
   const dispatch = useDispatch();
   const navigator = useNavigate();
   const { state } = useLocation()
@@ -39,7 +39,7 @@ export default function UserPage() {
   const Account = useSelector((state: RootState) => state.account.Account);
 
   useEffect(() => {
-    requestEmployeeById(parseInt(UserId!)).subscribe({
+    requestEmployeeById(parseInt(EmployeeId!)).subscribe({
       next(user) {
         if (user === null) {
           setUserExists(false);
@@ -51,7 +51,7 @@ export default function UserPage() {
       error(err) {
       },
     })
-  }, [UserId])
+  }, [EmployeeId])
 
   //Edit
   const [usernameError, SetUsernameError] = useState('');
@@ -127,7 +127,7 @@ export default function UserPage() {
         });
         setError('');
         setOpenEdit(false);
-        navigator("/user/" + UserId);
+        navigator("/employee/" + UserId);
       },
       error(err) {
         setError(err.message)

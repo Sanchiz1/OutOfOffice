@@ -203,7 +203,7 @@ export default function Header() {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={() => { navigator('/user/' + User.id); handleClose(); }}>
+            <MenuItem onClick={() => { navigator('/employee/' + User.id); handleClose(); }}>
               <Avatar /> Profile
             </MenuItem>
             <Divider />

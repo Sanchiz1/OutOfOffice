@@ -38,7 +38,7 @@ public class InitializationService
 
     private async Task AddAdministrator()
     {
-        var adminPosition = _positionRepository.GetByName(Positions.Administrator.Name);
+        var adminPosition = await _positionRepository.GetByName(Positions.Administrator.Name);
 
         if (adminPosition is null) throw new NotFoundException($"Postion not found: {Positions.Administrator.Name}");
 

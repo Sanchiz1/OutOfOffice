@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouterProvider, createBrowserRouter, redirect } from 'react-router-dom';
 import { isSigned } from '../API/loginRequests';
-import { requestAccount } from '../API/userRequests';
+import { requestAccount } from '../API/employeeRequests';
 import { ShowFailure } from '../Helpers/SnackBarHelper';
 import { setGlobalError, setLogInError, setPermissionError } from '../Redux/Reducers/AccountReducer';
 import { RootState } from '../Redux/store';
@@ -13,6 +13,7 @@ import SignUp from './Sign/Sign-up';
 import Settings from './User/Settings';
 import UserPage from './User/UserPage';
 import NotFoundPage from './UtilComponents/NotFoundPage';
+import EmployeesPage from './Employees/EmployeesPage';
 
 const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void) => createBrowserRouter([
     {
@@ -23,8 +24,13 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
                 element: <Main />
             },
             {
-                path: "/user/:UserId",
+                path: "/employee/:EmployeeId",
                 element: <UserPage />
+            },
+            {
+                path: "/employees",
+                element: <EmployeesPage />,
+                loader: async () => CheckSigned(SignInErrorAction)
             },
             {
                 path: "/settings",
@@ -85,14 +91,14 @@ function CheckSigned(Action: () => void) {
     return null;
 }
 
-async function CheckRole(SignInErrorAction: () => void, PermissionErrorAction: () => void, roles: string[]) {
+async function CheckRole(SignInErrorAction: () => void, PermissionErrorAction: () => void, roles: number[]) {
     if (!isSigned()) {
         SignInErrorAction();
         return redirect("/")
     };
     try {
         const result = await requestAccount().toPromise();
-        if (!roles.includes(result!.Role)) {
+        if (!roles.includes(result!.positionId)) {
             PermissionErrorAction();
             return redirect("/");
         };

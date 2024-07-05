@@ -7,6 +7,10 @@ export function requestUsers() {
     return GetAjaxObservable<Employee[]>(`/employee/all?orderBy=Id`, "GET", false, {'Content-Type': 'application/json'}, false);
 }
 
+export function requestSearchedEmployees(offset: Number, next: Number, search: string, orderBy: string = "Id", order: string = "ASC") {
+    return GetAjaxObservable<Employee[]>(`/employee/search?search=${search}&take=${next}&skip=${offset}&orderBy=${orderBy}&order=${order}`, "GET", false, {'Content-Type': 'application/json'}, false)
+}
+
 export function requestEmployeeById(id: Number) {
     return GetAjaxObservable<Employee>(`/employee/${id}`, "GET", false, {'Content-Type': 'application/json'}, false).pipe(
         catchError((error) => {

@@ -1,6 +1,6 @@
 import { Box, Button } from '@mui/material';
 import React, { useState } from 'react';
-import { requestDeleteUserAvatar, requestUploadUserAvatar } from '../../API/userRequests';
+import { requestDeleteUserAvatar, requestUploadUserAvatar } from '../../API/employeeRequests';
 import { enqueueSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
 import { setGlobalError } from '../../Redux/Reducers/AccountReducer';

@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { createUserRequest } from '../../API/userRequests';
+import { createUserRequest } from '../../API/employeeRequests';
 import { ShowFailure, ShowSuccess } from '../../Helpers/SnackBarHelper';
 import { UserInput } from '../../Types/Employee';
 

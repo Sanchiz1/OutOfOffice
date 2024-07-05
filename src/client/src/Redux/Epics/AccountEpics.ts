@@ -1,6 +1,6 @@
 import { Epic, ofType } from "redux-observable";
 import { catchError, map, merge, mergeMap, of } from "rxjs";
-import { requestAccount } from "../../API/userRequests";
+import { requestAccount } from "../../API/employeeRequests";
 import { Employee } from "../../Types/Employee";
 import { getAccount, setLogInError } from "../Reducers/AccountReducer";
 

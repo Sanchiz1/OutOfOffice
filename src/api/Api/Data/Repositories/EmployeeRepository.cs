@@ -53,6 +53,28 @@ public class EmployeeRepository : IEmployeeRepository
         return result.ToList();
     }
 
+    public async Task<List<Employee>> GetBySearch(string search, int skip, int take, string orderBy, string order = "ASC")
+    {
+        string query = $@"SELECT e.Id,
+                        e.Fullname,
+                        e.Email,
+                        e.PositionId,
+                        e.Subdivision,
+                        e.Status,
+                        e.PeoplePartner,
+                        e.OutOfOfficeBalance
+                        FROM Employees e
+                        WHERE e.Fullname LIKE '%{search}%'
+                        ORDER BY {orderBy} {order}
+                        OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.QueryAsync<Employee>(query, new { skip, take });
+
+        return result.ToList();
+    }
+
     public async Task<Employee?> GetById(int id)
     {
         string query = $@"SELECT e.Id,

@@ -7,6 +7,7 @@ public interface IEmployeeRepository
     Task<List<Employee>> Get(int skip, int take, string orderBy, string order = "ASC");
 
     Task<List<Employee>> GetAll(string orderBy, string order = "ASC");
+    Task<List<Employee>> GetBySearch(string search, int skip, int take, string orderBy, string order = "ASC");
 
     Task<Employee?> GetById(int id);
 

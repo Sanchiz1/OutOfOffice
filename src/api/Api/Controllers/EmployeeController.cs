@@ -4,8 +4,6 @@ using Api.Interfaces;
 using Api.Models;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-
 namespace Api.Controllers;
 
 [ApiController]
@@ -47,8 +45,15 @@ public class EmployeeController : ControllerBase
         var user = await _employeeRepository.GetById(userId);
 
         if(user is null) return NotFound();
-        
         return user;
+    }
+
+
+    [HttpGet]
+    [Route("search")]
+    public async Task<ActionResult<IEnumerable<Employee>>> GetSearchedEmployees(int skip, int take, string search = "", string orderBy = "Id",string order = "ASC")
+    {
+        return await _employeeRepository.GetBySearch(search, skip, take, orderBy, order);
     }
 
     [HttpGet]
@@ -68,11 +73,11 @@ public class EmployeeController : ControllerBase
     {
         var employee = await _employeeRepository.GetByEmail(request.Email);
 
-        if(employee is null) return BadRequest(new Error("Wrong email or password"));
+        if(employee is null) return BadRequest(new Models.Error("Wrong email or password"));
 
         var empPassword = await _employeeRepository.GetPasswordById(employee.Id);
 
-        if (_hashingService.ComputeHash(request.Password) != empPassword) return BadRequest(new Error("Wrong email or password"));
+        if (_hashingService.ComputeHash(request.Password) != empPassword) return BadRequest(new Models.Error("Wrong email or password"));
 
         return _tokenService.GenerateToken(employee);
     }

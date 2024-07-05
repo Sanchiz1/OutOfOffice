@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Logout } from '../../API/loginRequests';
-import { DeleteAccountRequest, changeUserPasswordRequest } from '../../API/userRequests';
+import { DeleteAccountRequest, changeUserPasswordRequest } from '../../API/employeeRequests';
 import { getAccount } from '../../Redux/Reducers/AccountReducer';
 import { RootState } from '../../Redux/store';
 import { Employee } from '../../Types/Employee';
