@@ -16,19 +16,6 @@ import { getUserAccount } from '../../Redux/Epics/AccountEpics';
 import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 import { ShowFailure } from '../../Helpers/SnackBarHelper';
 
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 export default function SignIn() {
   const dispatch = useDispatch();
   const navigator = useNavigate();
@@ -38,15 +25,15 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     
-    let loginOrEmail = data.get('email')!.toString();
+    let email = data.get('email')!.toString();
     let password = data.get('password')!.toString();
     
-    if(loginOrEmail === '' || password === ''){
+    if(email === '' || password === ''){
       dispatch(setGlobalError('Fill all fields'));
       return;
     }
 
-    LoginRequest(loginOrEmail, password).subscribe({
+    LoginRequest(email, password).subscribe({
       next() {
         dispatch(getUserAccount());
         if(state === null){
@@ -108,13 +95,6 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link variant="body2" onClick={() => navigator("/Sign-up", { state: state })} sx={{cursor:'pointer'}}>
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
       </Container>

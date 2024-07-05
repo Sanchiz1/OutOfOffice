@@ -13,7 +13,7 @@ import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createUserRequest } from '../../API/userRequests';
 import { ShowFailure, ShowSuccess } from '../../Helpers/SnackBarHelper';
-import { UserInput } from '../../Types/User';
+import { UserInput } from '../../Types/Employee';
 
 const validUsernamePattern = /^[a-zA-Z0-9_]+$/;
 const validEmailPattern = /^(?=.{0,64}$)[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;

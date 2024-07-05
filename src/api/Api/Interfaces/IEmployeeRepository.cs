@@ -10,6 +10,11 @@ public interface IEmployeeRepository
 
     Task<Employee?> GetById(int id);
 
+    Task<Employee?> GetByEmail(string email);
+
+    Task<string?> GetPasswordById(int id);
+
+
     Task<int> Add(Employee position);
 
     Task Update(Employee position);

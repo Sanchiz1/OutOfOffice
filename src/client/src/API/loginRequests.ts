@@ -1,26 +1,25 @@
 import { map } from "rxjs";
 import { deleteCookie, getCookie, setCookie } from "../Helpers/CookieHelper";
 import { getAccount } from "../Redux/Reducers/AccountReducer";
-import { User } from "../Types/User";
+import { Employee } from "../Types/Employee";
 import { GetAjaxObservable } from "./APIUtils";
 
 export type LoginType = {
-  token: string,
+  value: string,
   expires: Date,
   issued: Date
 }
 
-
-export function LoginRequest(loginOrEmail: string, password: string) {
-  return GetAjaxObservable<LoginType>(`/account/login`, "POST", false, {'Content-Type': 'application/json'}, true, {
-    'usernameOrEmail': loginOrEmail,
+export function LoginRequest(email: string, password: string) {
+  return GetAjaxObservable<LoginType>(`/employee/login`, "POST", false, {'Content-Type': 'application/json'}, false, {
+    'email': email,
     'password': password
   }).pipe(
     map((value) => {
       setCookie({
         name: "access_token",
-        value: JSON.stringify(value.response.data.token),
-        expires_second: (new Date(value.response.data.expires).getTime() - new Date(value.response.data.issued).getTime()) / 1000,
+        value: JSON.stringify(value.value),
+        expires_second: (new Date(value.expires).getTime() - new Date(value.issued).getTime()) / 1000,
         path: "/"
       });
     })
@@ -29,7 +28,7 @@ export function LoginRequest(loginOrEmail: string, password: string) {
 
 export const Logout = () => {
   deleteCookie("access_token");
-  getAccount({} as User);
+  getAccount({} as Employee);
 }
 
 export function isSigned(): boolean {

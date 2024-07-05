@@ -14,7 +14,7 @@ import { Logout } from '../../API/loginRequests';
 import { DeleteAccountRequest, changeUserPasswordRequest } from '../../API/userRequests';
 import { getAccount } from '../../Redux/Reducers/AccountReducer';
 import { RootState } from '../../Redux/store';
-import { User } from '../../Types/User';
+import { Employee } from '../../Types/Employee';
 
 export default function Settings() {
     const [openChangePassword, setOpenChangePassword] = useState(false);
@@ -72,7 +72,7 @@ export default function Settings() {
         DeleteAccountRequest(Account.Id, password).subscribe({
             next() {
                 Logout();
-                dispatch(getAccount({} as User)); navigator('/');
+                dispatch(getAccount({} as Employee)); navigator('/');
             },
             error(err) {
                 setError(err.message);

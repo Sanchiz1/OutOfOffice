@@ -1,13 +1,12 @@
-export interface User {
-    Id: number,
-    Username: string,
-    Email: string,
-    Bio?: string,
-    DateRegistered: Date,
-    Posts: number
-    Comments: number
-    RoleId: number
-    Role: string
+export interface Employee {
+    id: number,
+    fullName: string,
+    email: string,
+    positionId: number,
+    subdivision: string,
+    status: string,
+    peoplePartner?: number,
+    outOfOfficeBalance: number
 }
 export interface UserRegistration {
     id: number,

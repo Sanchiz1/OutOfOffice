@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Alert, Avatar, Collapse, Container, CssBaseline, Dialog, DialogActions, DialogTitle, IconButton, LinearProgress, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Alert, Collapse, Container, CssBaseline, Dialog, DialogActions, DialogTitle, IconButton, LinearProgress, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -10,10 +10,9 @@ import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { DeleteUserRequest, requestUserByUsername, updateUserRequest, updateUserRoleRequest } from '../../API/userRequests';
-import { GetDateString } from '../../Helpers/DateFormatHelper';
+import { DeleteUserRequest, requestEmployeeById, updateUserRequest, updateUserRoleRequest } from '../../API/userRequests';
 import { RootState } from '../../Redux/store';
-import { User, UserInput } from '../../Types/User';
+import { Employee, UserInput } from '../../Types/Employee';
 import { BootstrapInput } from '../UtilComponents/BootstrapInput';
 import NotFoundPage from '../UtilComponents/NotFoundPage';
 import UploadAvatar from './UploadAvatar';
@@ -28,11 +27,11 @@ const roles = {
 };
 
 export default function UserPage() {
-  const [user, setUser] = useState<User>();
+  const [employee, setEmployee] = useState<Employee>();
   const [role, setRole] = useState(1);
   const [userExists, setUserExists] = useState(true);
   const [openEdit, setOpenEdit] = useState(false);
-  let { Username } = useParams();
+  let { UserId } = useParams();
   const dispatch = useDispatch();
   const navigator = useNavigate();
   const { state } = useLocation()
@@ -40,19 +39,19 @@ export default function UserPage() {
   const Account = useSelector((state: RootState) => state.account.Account);
 
   useEffect(() => {
-    requestUserByUsername(Username!).subscribe({
+    requestEmployeeById(parseInt(UserId!)).subscribe({
       next(user) {
         if (user === null) {
           setUserExists(false);
           return;
         }
-        setUser(user);
-        setRole(user.RoleId);
+        setEmployee(user);
+        //setRole(user.RoleId);
       },
       error(err) {
       },
     })
-  }, [Username])
+  }, [UserId])
 
   //Edit
   const [usernameError, SetUsernameError] = useState('');
@@ -117,7 +116,7 @@ export default function UserPage() {
 
     let role_id: number = role;
 
-    updateUserRoleRequest(user?.Id!, role_id).subscribe({
+    updateUserRoleRequest(employee?.id!, role_id).subscribe({
       next(value) {
         enqueueSnackbar(value, {
           variant: 'success', anchorOrigin: {
@@ -128,7 +127,7 @@ export default function UserPage() {
         });
         setError('');
         setOpenEdit(false);
-        navigator("/user/" + Username);
+        navigator("/user/" + UserId);
       },
       error(err) {
         setError(err.message)
@@ -147,7 +146,7 @@ export default function UserPage() {
       setError('Fill password field');
       return;
     }
-    DeleteUserRequest(user!.Id, password).subscribe({
+    DeleteUserRequest(employee!.Id, password).subscribe({
       next(value) {
         enqueueSnackbar(value, {
           variant: 'success', anchorOrigin: {
@@ -168,7 +167,7 @@ export default function UserPage() {
     <>
       {userExists ?
         <>
-          {user != undefined ?
+          {employee != undefined ?
             <Box sx={{ display: 'flex' }}>
               <CssBaseline />
               <Box
@@ -202,139 +201,109 @@ export default function UserPage() {
                             display: 'flex',
                             flexDirection: 'column',
                           }}>
-                            <Box sx={{ width: '100%', mb: 3, display: 'flex', justifyContent: 'center' }}>
-                              <Avatar
-                                src={'http://localhost:8000/avatars/' + user.Id + ".png"}
-                                sx={{
-                                  width: 250, height: 250, border: '2px solid #424242',
-                                  bgcolor: '#212121',
-                                  color: '#757575',
-                                  fontSize: 100
-                                }}
-                              >{user.Username[0].toUpperCase()}</Avatar>
-                            </Box>
                             <Typography variant="h4" color="text.secondary" component="p">
-                              {user.Username}
+                              {employee.fullName}
                             </Typography>
                             <Typography variant="subtitle1" color="text.secondary" component="p">
-                              Joined: {GetDateString(new Date(user.DateRegistered))}
-                            </Typography>
-                            {
-                              user.Bio &&
-                              <>
-                                <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
-                                  {user.Bio}
-                                </Typography>
-                              </>
-                            }
-                            {(Account != null && user.Id === Account.Id) &&
-                              <>
-                                <Divider sx={{ mt: 2 }} />
-                                <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
-                                <Collapse in={openEdit}>
-                                  <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 1, mb: 3 }}>
-                                    <TextField
-                                      margin="normal"
-                                      required
-                                      fullWidth
-                                      id="username"
-                                      label="Username"
-                                      name="username"
-                                      autoComplete="off"
-                                      autoFocus
-                                      defaultValue={Account.Username}
-                                      error={usernameError != ''}
-                                      onFocus={() => SetUsernameError('')}
-                                      helperText={usernameError}
-                                    />
-                                    <TextField
-                                      margin="normal"
-                                      required
-                                      fullWidth
-                                      id="email"
-                                      label="Email address"
-                                      name="email"
-                                      autoComplete="off"
-                                      autoFocus
-                                      defaultValue={Account.Email}
-                                      error={emailError != ''}
-                                      onFocus={() => SetEmailError('')}
-                                      helperText={emailError}
-                                    />
-                                    <TextField
-                                      margin="normal"
-                                      fullWidth
-                                      id="bio"
-                                      label="Bio"
-                                      name="bio"
-                                      multiline
-                                      rows={4}
-                                      inputProps={{ maxLength: 100 }}
-                                      defaultValue={Account.Bio}
-                                      error={bioError != ''}
-                                      onFocus={() => SetBioError('')}
-                                      helperText={bioError}
-                                    />
-                                    <Collapse in={error != ''}>
-                                      <Alert
-                                        severity="error"
-                                        action={
-                                          <IconButton
-                                            aria-label="close"
-                                            color="inherit"
-                                            onClick={() => {
-                                              setError('');
-                                            }}
-                                          >
-                                            <CloseIcon />
-                                          </IconButton>
-                                        }
-                                        sx={{ mb: 2, fontSize: 15 }}
+                              Status: {employee.status}
+                              </Typography>
+                              <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
+                                {employee.subdivision}
+                              </Typography>
+                              {(Account != null && employee.id === Account.id) &&
+                                <>
+                                  <Divider sx={{ mt: 2 }} />
+                                  <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
+                                  <Collapse in={openEdit}>
+                                    <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 1, mb: 3 }}>
+                                      <TextField
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        id="username"
+                                        label="Username"
+                                        name="username"
+                                        autoComplete="off"
+                                        autoFocus
+                                        defaultValue={Account.fullName}
+                                        error={usernameError != ''}
+                                        onFocus={() => SetUsernameError('')}
+                                        helperText={usernameError}
+                                      />
+                                      <TextField
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        id="email"
+                                        label="Email address"
+                                        name="email"
+                                        autoComplete="off"
+                                        autoFocus
+                                        defaultValue={Account.email}
+                                        error={emailError != ''}
+                                        onFocus={() => SetEmailError('')}
+                                        helperText={emailError}
+                                      />
+                                      <Collapse in={error != ''}>
+                                        <Alert
+                                          severity="error"
+                                          action={
+                                            <IconButton
+                                              aria-label="close"
+                                              color="inherit"
+                                              onClick={() => {
+                                                setError('');
+                                              }}
+                                            >
+                                              <CloseIcon />
+                                            </IconButton>
+                                          }
+                                          sx={{ mb: 2, fontSize: 15 }}
+                                        >
+                                          {error}
+                                        </Alert>
+                                      </Collapse>
+                                      <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="outlined"
                                       >
-                                        {error}
-                                      </Alert>
-                                    </Collapse>
-                                    <Button
-                                      type="submit"
-                                      fullWidth
-                                      variant="outlined"
-                                    >
-                                      Submit
-                                    </Button>
-                                  </Box>
-                                  <Divider sx={{ my: 2 }} />
-                                  <UploadAvatar></UploadAvatar>
-                                </Collapse>
-                              </>}
-                            {(Account.Role === 'Administrator' && user.Role !== 'Administrator') &&
-                              <>
-                                <Divider sx={{ mt: 2 }} />
-                                <Button onClick={() => setOpenEdit(!openEdit)}>Settings</Button>
-                                <Collapse in={openEdit}>
-                                  <Box component="form" onSubmit={handleSubmitEditRole} noValidate sx={{ mt: 1, mb: 3 }}>
-                                    <Select
-                                      labelId="role-label"
-                                      id="role"
-                                      value={role.toString()}
-                                      fullWidth
-                                      onChange={handleChange}
-                                      sx={{ mb: 2 }}
-                                    >
-                                      <MenuItem value={1}>User</MenuItem>
-                                      <MenuItem value={2}>Moderator</MenuItem>
-                                      <MenuItem value={3}>Administrator</MenuItem>
-                                    </Select>
-                                    <Button
-                                      type="submit"
-                                      fullWidth
-                                      variant="outlined"
-                                    >
-                                      Submit
-                                    </Button>
-                                  </Box>
-                                  <Button color='error' sx={{ width: "100%" }} onClick={() => { setOpenDeleteAccount(true) }}>Delete user</Button>
-                                </Collapse>
-                              </>}
+                                        Submit
+                                      </Button>
+                                    </Box>
+                                    <Divider sx={{ my: 2 }} />
+                                    <UploadAvatar></UploadAvatar>
+                                  </Collapse>
+                                </>}
+                              {(Account.Role === 'Administrator' && employee.Role !== 'Administrator') &&
+                                <>
+                                  <Divider sx={{ mt: 2 }} />
+                                  <Button onClick={() => setOpenEdit(!openEdit)}>Settings</Button>
+                                  <Collapse in={openEdit}>
+                                    <Box component="form" onSubmit={handleSubmitEditRole} noValidate sx={{ mt: 1, mb: 3 }}>
+                                      <Select
+                                        labelId="role-label"
+                                        id="role"
+                                        value={role.toString()}
+                                        fullWidth
+                                        onChange={handleChange}
+                                        sx={{ mb: 2 }}
+                                      >
+                                        <MenuItem value={1}>User</MenuItem>
+                                        <MenuItem value={2}>Moderator</MenuItem>
+                                        <MenuItem value={3}>Administrator</MenuItem>
+                                      </Select>
+                                      <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="outlined"
+                                      >
+                                        Submit
+                                      </Button>
+                                    </Box>
+                                    <Button color='error' sx={{ width: "100%" }} onClick={() => { setOpenDeleteAccount(true) }}>Delete user</Button>
+                                  </Collapse>
+                                </>}
                           </Grid>
                         </Paper>
                       </Grid>
@@ -352,10 +321,10 @@ export default function UserPage() {
                         >
                           <Grid item xs={12} sx={{ mb: 2 }}>
                             <Typography variant="subtitle1" color="text.primary" component="p">
-                              {user.Posts} posts
+                              {employee.Posts} posts
                             </Typography>
                             <Typography variant="subtitle1" color="text.primary" component="p">
-                              {user.Comments} comments
+                              {employee.Comments} comments
                             </Typography>
                           </Grid>
                           <Divider sx={{ mb: 1 }} />
@@ -366,7 +335,7 @@ export default function UserPage() {
                             alignItems: 'stretch',
                           }}>
                             <Typography variant="subtitle1" color="text.primary" component="p" sx={{ display: 'flex', alignItems: 'center' }}>
-                              {user.Username}`s posts
+                              {employee.Username}`s posts
                             </Typography>
                             <Typography variant="subtitle1" sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
                               <Select

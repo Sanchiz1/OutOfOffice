@@ -18,13 +18,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import EngineeringIcon from '@mui/icons-material/Engineering';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CallMissedOutgoingIcon from '@mui/icons-material/CallMissedOutgoing';
 import { Outlet, Link as RouterLink, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Logout, isSigned } from '../API/loginRequests';
 import { setCookie } from '../Helpers/CookieHelper';
 import { getUserAccount } from '../Redux/Epics/AccountEpics';
 import { getAccount, setLogInError, setPermissionError } from '../Redux/Reducers/AccountReducer';
 import { RootState } from '../Redux/store';
-import { User } from '../Types/User';
+import { Employee } from '../Types/Employee';
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -47,7 +50,6 @@ export default function Header() {
 
 
   useEffect(() => {
-    setCookie({ name: "refresh_sent", value: "false" })
     if (isSigned()) {
       dispatch(getUserAccount())
     }
@@ -157,17 +159,9 @@ export default function Header() {
           </Link>
           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
             {isSigned() ?
-              <Avatar
-                onClick={handleClick} src={'http://localhost:8000/avatars/' + User.Id + ".png"}
-                sx={{
-                  bgcolor: '#212121',
-                  color: '#757575',
-                  textDecoration: 'none',
-                  border: '2px solid #424242',
-                  mr: 1
-                }}
-              >{User.Username ? User.Username[0].toUpperCase() : ""}
-              </Avatar>
+              <Link variant="subtitle1" align="center" color="text.primary" component="span" onClick={handleClick} sx={{ textDecoration: 'none', ":hover": { cursor: 'pointer' } }}>
+                {User.fullName}
+              </Link>
               :
               <Button variant="text" onClick={() => navigator("/Sign-in", { state: location })}>Sign in</Button>
             }
@@ -209,24 +203,28 @@ export default function Header() {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={() => { navigator('/user/' + User.Username); handleClose(); }}>
+            <MenuItem onClick={() => { navigator('/user/' + User.id); handleClose(); }}>
               <Avatar /> Profile
             </MenuItem>
             <Divider />
-            {(User?.Role === "Administrator" || User?.Role === "Moderator") &&
-              <MenuItem onClick={() => { navigator('/Reports'); handleClose(); }} hidden={!(User?.Role === "Administrator" || User?.Role === "Moderator")}>
-                <ListItemIcon>
-                  <EmojiFlagsIcon fontSize="small" />
-                </ListItemIcon>
-                Reports
-              </MenuItem>}
-            {User?.Role === "Administrator" &&
-              <MenuItem onClick={() => { navigator('/AdminPanel'); handleClose(); }} hidden={!(User?.Role === "Administrator")}>
-                <ListItemIcon>
-                  <SupervisorAccountIcon fontSize="small" />
-                </ListItemIcon>
-                Admin panel
-              </MenuItem>}
+            <MenuItem onClick={() => { navigator('/LeaveRequests'); handleClose(); }}>
+              <ListItemIcon>
+                <CallMissedOutgoingIcon fontSize="small" />
+              </ListItemIcon>
+              LeaveRequests
+            </MenuItem>
+            <MenuItem onClick={() => { navigator('/ApprovalRequests'); handleClose(); }}>
+              <ListItemIcon>
+                <CheckCircleIcon fontSize="small" />
+              </ListItemIcon>
+              ApprovalRequests
+            </MenuItem>
+            <MenuItem onClick={() => { navigator('/Employees'); handleClose(); }}>
+              <ListItemIcon>
+                <EngineeringIcon fontSize="small" />
+              </ListItemIcon>
+              Employees
+            </MenuItem>
             <MenuItem onClick={() => { navigator('/Settings'); handleClose(); }}>
               <ListItemIcon>
                 <Settings fontSize="small" />
@@ -235,7 +233,7 @@ export default function Header() {
             </MenuItem>
             <MenuItem onClick={() => {
               Logout();
-              dispatch(getAccount({} as User)); navigator(location); handleClose()
+              dispatch(getAccount({} as Employee)); navigator(location); handleClose()
             }}>
               <ListItemIcon>
                 <LogoutIcon fontSize="small" />

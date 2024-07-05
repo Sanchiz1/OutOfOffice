@@ -1,52 +1,14 @@
 import { catchError, map, of } from "rxjs";
-import { User, UserInput } from "../Types/User";
+import { Employee, UserInput } from "../Types/Employee";
 import { GetAjaxObservable } from "./APIUtils";
 import NotFoundError from "../Types/NotFoundError";
 
-const url = "https://localhost:8000";
-
-interface GraphqlSearchedUser {
-    users: {
-        searchedUsers: User[]
-    }
+export function requestUsers() {
+    return GetAjaxObservable<Employee[]>(`/employee/all?orderBy=Id`, "GET", false, {'Content-Type': 'application/json'}, false);
 }
 
-export function requestUsers(offset: Number, next: Number, userTimestamp: Date, orderBy: string, order: string) {
-    return GetAjaxObservable<User[]>(`/users?userTimestamp=${userTimestamp.toISOString()}&take=${next}&skip=${offset}&orderBy=${orderBy}&order=${order}`, "GET", false, {'Content-Type': 'application/json'}, true).pipe(
-        map((value) => {
-            return value.response.data;
-        })
-    );
-}
-
-export function requestSearchedUsers(offset: Number, next: Number, userTimestamp: Date, search: string, orderBy: string = "Id", order: string = "ASC") {
-    return GetAjaxObservable<User[]>(`/users/search?search=${search}&userTimestamp=${userTimestamp.toISOString()}&take=${next}&skip=${offset}&orderBy=${orderBy}&order=${order}`, "GET", false, {'Content-Type': 'application/json'}, true).pipe(
-        map((value) => {
-            return value.response.data;
-        })
-    );
-}
-
-export function requestUserById(id: Number) {
-    return GetAjaxObservable<User>(`/users/${id}`, "GET", false, {'Content-Type': 'application/json'}, true).pipe(
-        map((value) => {
-            return value.response.data; 
-        }),
-        catchError((error) => {
-            if(error instanceof NotFoundError){
-                return of(null);
-            }
-
-            throw error
-        })
-    );
-}
-
-export function requestUserByUsername(username: string) {
-    return GetAjaxObservable<User>(`/users/${username}`, "GET", false, {'Content-Type': 'application/json'}, true).pipe(
-        map((response) => {
-            return response.response.data;
-        }),
+export function requestEmployeeById(id: Number) {
+    return GetAjaxObservable<Employee>(`/employee/${id}`, "GET", false, {'Content-Type': 'application/json'}, false).pipe(
         catchError((error) => {
             if(error instanceof NotFoundError){
                 return of(null);
@@ -58,15 +20,12 @@ export function requestUserByUsername(username: string) {
 }
 
 export function requestAccount() {
-    return GetAjaxObservable<User>(`/account`, "GET", true, {'Content-Type': 'application/json'}, true).pipe(
-        map((value) => {
-            return value.response.data;
-        })
+    return GetAjaxObservable<Employee>(`/employee/current`, "GET", true, {'Content-Type': 'application/json'}, false).pipe(
     );
 }
 
 export function createUserRequest(UserInput: UserInput) {
-    return GetAjaxObservable(`/account/register`, "POST", false, {'Content-Type': 'application/json'}, true, UserInput).pipe(
+    return GetAjaxObservable(`/account/register`, "POST", false, {'Content-Type': 'application/json'}, false, UserInput).pipe(
         map(() => {
             return "User created successfully";
         })
@@ -74,7 +33,7 @@ export function createUserRequest(UserInput: UserInput) {
 }
 
 export function updateUserRequest(UserInput: UserInput) {
-    return GetAjaxObservable(`/account`, "PATCH", true, {'Content-Type': 'application/json'}, true, UserInput).pipe(
+    return GetAjaxObservable(`/account`, "PATCH", true, {'Content-Type': 'application/json'}, false, UserInput).pipe(
         map(() => {
             return "User updated successfully";
         })

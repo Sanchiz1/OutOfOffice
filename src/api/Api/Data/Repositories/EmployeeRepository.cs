@@ -16,6 +16,7 @@ public class EmployeeRepository : IEmployeeRepository
     {
         string query = $@"SELECT e.Id,
                         e.Fullname,
+                        e.Email,
                         e.PositionId,
                         e.Subdivision,
                         e.Status,
@@ -36,6 +37,7 @@ public class EmployeeRepository : IEmployeeRepository
     {
         string query = $@"SELECT e.Id,
                         e.Fullname,
+                        e.Email,
                         e.PositionId,
                         e.Subdivision,
                         e.Status,
@@ -55,19 +57,53 @@ public class EmployeeRepository : IEmployeeRepository
     {
         string query = $@"SELECT e.Id,
                         e.Fullname,
+                        e.Email,
                         e.PositionId,
                         e.Subdivision,
                         e.Status,
                         e.PeoplePartner,
                         e.OutOfOfficeBalance
                         FROM Employees e
-                        WHERE t.Id = @id";
+                        WHERE e.Id = @id";
 
         using var connection = _dapperContext.CreateConnection();
 
         var result = await connection.QueryAsync<Employee>(query, new { id });
 
         return result.FirstOrDefault();
+    }
+
+    public async Task<Employee?> GetByEmail(string email)
+    {
+        string query = $@"SELECT e.Id,
+                        e.Fullname,
+                        e.Email,
+                        e.PositionId,
+                        e.Subdivision,
+                        e.Status,
+                        e.PeoplePartner,
+                        e.OutOfOfficeBalance
+                        FROM Employees e
+                        WHERE e.Email = @email";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.QueryAsync<Employee>(query, new { email });
+
+        return result.FirstOrDefault();
+    }
+
+    public async Task<string?> GetPasswordById(int id)
+    {
+        string query = $@"SELECT e.Password
+                        FROM Employees e
+                        WHERE e.Id = @id";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.ExecuteScalarAsync<string>(query, new { id });
+
+        return result;
     }
 
     public async Task<int> Add(Employee employee)

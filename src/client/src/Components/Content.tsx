@@ -23,7 +23,7 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
                 element: <Main />
             },
             {
-                path: "/user/:Username",
+                path: "/user/:UserId",
                 element: <UserPage />
             },
             {

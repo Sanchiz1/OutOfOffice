@@ -5,10 +5,10 @@ import { SxProps, Theme } from "@mui/material/styles";
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { User } from '../../Types/User';
+import { Employee } from '../../Types/Employee';
 
 interface Props {
-    user: User;
+    user: Employee;
     customClickEvent: React.MouseEventHandler<HTMLDivElement>
     sx?: SxProps<Theme> | undefined,
 }

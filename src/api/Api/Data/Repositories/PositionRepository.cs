@@ -46,7 +46,7 @@ public class PositionRepository : IPositionRepository
         string query = $@"SELECT p.Id,
                         p.Name
                         FROM Positions p
-                        WHERE t.Id = @id";
+                        WHERE p.Id = @id";
 
         using var connection = _dapperContext.CreateConnection();
 
@@ -60,7 +60,7 @@ public class PositionRepository : IPositionRepository
         string query = $@"SELECT p.Id,
                         p.Name
                         FROM Positions p
-                        WHERE t.name = @name";
+                        WHERE p.Name = @name";
 
         using var connection = _dapperContext.CreateConnection();
 

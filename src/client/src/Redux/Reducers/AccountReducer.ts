@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "../../Types/User"
+import { Employee } from "../../Types/Employee"
 
 export interface AccountState {
-    Account: User,
+    Account: Employee,
     GlobalError: string,
     PermissionError: string,
     LogInError: string
 }
 const initialState: AccountState = {
-    Account: {} as User,
+    Account: {} as Employee,
     GlobalError: '',
     PermissionError: '',
     LogInError: ''
@@ -19,7 +19,7 @@ export const AccountSlice = createSlice({
     initialState,
     reducers: {
         getAccount: (state,
-            action: PayloadAction<User>) => {
+            action: PayloadAction<Employee>) => {
             state.Account = action.payload;
         },
         setLogInError: (state,

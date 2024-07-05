@@ -1,15 +1,14 @@
-import { catchError, of, throwError } from "rxjs";
+import { catchError, map, of, throwError } from "rxjs";
 import { ajax } from "rxjs/internal/ajax/ajax";
 import { getCookie } from "../Helpers/CookieHelper";
 import { isSigned } from "./loginRequests";
 import NotFoundError from "../Types/NotFoundError";
 
-const url = "http://localhost:7223";
+const url = "https://localhost:7223";
 
 export type response<T = any> = {
-  data: T,
-  error?: string
-}
+  message: string
+} | T;
 
 export function GetAjaxObservable<T>(requestUrl: string,
   method: string,
@@ -35,18 +34,20 @@ export function GetAjaxObservable<T>(requestUrl: string,
     withCredentials: withCredentials,
   }).pipe(
     catchError((error) => {
-      if (error?.response?.error == null || error.status == 500) {
-        throw new Error("Internal error")
-      }
 
       if (error.status == 401) {
         throw new Error("Unauthorized")
       }
 
       if (error.status == 404) {
-        throw new NotFoundError(error.response.error);
+        throw new NotFoundError(error?.response?.message);
       }
 
-      throw new Error(error.response.error);
-    }))
+      if (error?.response?.message == null || error.status == 500) {
+        throw new Error("Internal error")
+      }
+
+      throw new Error(error.response.message);
+    }),
+    map((v) => v.response as T))
 }
