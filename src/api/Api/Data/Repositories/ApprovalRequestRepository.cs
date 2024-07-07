@@ -1,9 +1,10 @@
-﻿using Api.Models;
+﻿using Api.Interfaces;
+using Api.Models;
 using Dapper;
 
 namespace Api.Data.Repositories;
 
-public class ApprovalRequestRepository
+public class ApprovalRequestRepository : IApprovalRequestRepository
 {
     private readonly DapperContext _dapperContext;
 

@@ -12,6 +12,8 @@ public interface IEmployeeRepository
 
     Task<List<Employee>> GetByProject(int projectId, string search, int skip, int take, string orderBy, string order = "ASC");
 
+    Task<List<Employee>> GetAllProjectManagers(int employeeId, string orderBy, string order = "ASC");
+
     Task<Employee?> GetById(int id);
 
     Task<Employee?> GetByEmail(string email);

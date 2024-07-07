@@ -43,7 +43,6 @@ public class EmployeeController : ControllerBase
 
         if (userId == 0) return Unauthorized();
 
-
         var user = await _employeeRepository.GetById(userId);
 
         if (user is null) return NotFound();
