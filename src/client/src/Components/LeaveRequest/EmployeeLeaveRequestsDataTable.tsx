@@ -1,6 +1,5 @@
-import { Button, InputAdornment, TextField } from '@mui/material';
+import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
-import SearchIcon from '@mui/icons-material/Search';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Paper from '@mui/material/Paper';
 import Switch from '@mui/material/Switch';
@@ -16,15 +15,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Employee } from '../../Types/Employee';
-import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
-import { requestPositions } from '../../API/positionRequests';
-import { LeaveRequest } from '../../Types/LeaveRequest';
-import { GetDateString } from '../../Helpers/DateFormatHelper';
 import { getEmployeeLeaveRequests } from '../../API/leaveRequestRequests';
-import { RootState } from '../../Redux/store';
+import { GetDateString } from '../../Helpers/DateFormatHelper';
+import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
+import { LeaveRequest } from '../../Types/LeaveRequest';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {

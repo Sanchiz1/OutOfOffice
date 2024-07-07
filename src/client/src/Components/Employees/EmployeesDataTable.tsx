@@ -16,13 +16,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Employee } from '../../Types/Employee';
 import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 import { requestSearchedEmployees } from '../../API/employeeRequests';
 import { Position, Positions } from '../../Types/Position';
 import { requestPositions } from '../../API/positionRequests';
+import { RootState } from '../../Redux/store';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -196,7 +197,6 @@ export default function EmployeesDataTable() {
   const navigator = useNavigate();
 
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [positions, setPositions] = React.useState<Position[]>([]);
 
   const [rows, setRows] = React.useState<Employee[]>([]);
   const [order, setOrder] = React.useState<Order>('asc');
@@ -206,17 +206,7 @@ export default function EmployeesDataTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [search, setSearch] = React.useState<string>('');
-
-  React.useEffect(() => {
-    requestPositions().subscribe({
-      next(value) {
-        setPositions(value)
-      },
-      error(err) {
-        dispatch(setGlobalError(err.message));
-      },
-    });
-  }, [])
+  const Postions = useSelector((state: RootState) => state.account.Positions);
 
   React.useEffect(() => {
     requestSearchedEmployees(page * rowsPerPage, rowsPerPage, search, orderBy, order).subscribe({
@@ -309,7 +299,7 @@ export default function EmployeesDataTable() {
                       {row.fullName}
                     </TableCell>
                     <TableCell align="left">{row.email}</TableCell>
-                    <TableCell align="left">{positions.find(p => p.id === row.positionId)?.name}</TableCell>
+                    <TableCell align="left">{Postions.find(p => p.id === row.positionId)?.name}</TableCell>
                     <TableCell align="left">{row.subdivision}</TableCell>
                     <TableCell align="left">{row.outOfOfficeBalance}</TableCell>
                     <TableCell align="left">{row.status}</TableCell>
