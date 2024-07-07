@@ -2,7 +2,7 @@
 
 public class LeaveRequestStatuses
 {
-    public static string New => "New";
-    public static string Submitted => "Submitted";
-    public static string Canceled => "Canceled";
+    public const string New = "New";
+    public const string Submitted = "Submitted";
+    public const string Canceled = "Canceled";
 }

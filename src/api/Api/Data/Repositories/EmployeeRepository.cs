@@ -17,7 +17,7 @@ public class EmployeeRepository : IEmployeeRepository
         string query = $@"SELECT e.Id,
                         e.Fullname,
                         e.Email,
-                        e.PositionId,
+                        e.Position,
                         e.Subdivision,
                         e.Status,
                         e.PeoplePartner,
@@ -38,7 +38,7 @@ public class EmployeeRepository : IEmployeeRepository
         string query = $@"SELECT e.Id,
                         e.Fullname,
                         e.Email,
-                        e.PositionId,
+                        e.Position,
                         e.Subdivision,
                         e.Status,
                         e.PeoplePartner,
@@ -58,7 +58,7 @@ public class EmployeeRepository : IEmployeeRepository
         string query = $@"SELECT e.Id,
                         e.Fullname,
                         e.Email,
-                        e.PositionId,
+                        e.Position,
                         e.Subdivision,
                         e.Status,
                         e.PeoplePartner,
@@ -80,7 +80,7 @@ public class EmployeeRepository : IEmployeeRepository
         string query = $@"SELECT e.Id,
                         e.Fullname,
                         e.Email,
-                        e.PositionId,
+                        e.Position,
                         e.Subdivision,
                         e.Status,
                         e.PeoplePartner,
@@ -100,7 +100,7 @@ public class EmployeeRepository : IEmployeeRepository
         string query = $@"SELECT e.Id,
                         e.Fullname,
                         e.Email,
-                        e.PositionId,
+                        e.Position,
                         e.Subdivision,
                         e.Status,
                         e.PeoplePartner,
@@ -131,10 +131,10 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<int> Add(Employee employee)
     {
         string query = $@"INSERT INTO Employees
-                        (Fullname, Email, PositionId, Subdivision, Status, PeoplePartner, OutOfOfficeBalance, Password)
+                        (Fullname, Email, Position, Subdivision, Status, PeoplePartner, OutOfOfficeBalance, Password)
                         OUTPUT INSERTED.Id
                         VALUES
-                        (@Fullname, @Email, @PositionId, @Subdivision, @Status, @PeoplePartner, @OutOfOfficeBalance, @Password)";
+                        (@Fullname, @Email, @Position, @Subdivision, @Status, @PeoplePartner, @OutOfOfficeBalance, @Password)";
 
         using var connection = _dapperContext.CreateConnection();
 
@@ -149,7 +149,7 @@ public class EmployeeRepository : IEmployeeRepository
                         SET
                         Fullname = @Fullname,
                         Email = @Email,
-                        PositionId = @PositionId,
+                        Position = @Position,
                         Subdivision = @Subdivision,
                         Status = @Status,
                         PeoplePartner = @PeoplePartner,

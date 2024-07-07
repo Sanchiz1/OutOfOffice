@@ -13,7 +13,6 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<HashingService>();
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddSingleton<IPositionRepository, PositionRepository>();
 builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddSingleton<ILeaveRequestRepository, LeaveRequestRepository>();
 

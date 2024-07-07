@@ -22,8 +22,7 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
         children: [
             {
                 path: "/",
-                element: <Main />,
-                loader: async () => CheckSigned(SignInErrorAction)
+                element: <Main />
             },
             {
                 path: "/employee/:EmployeeId",
@@ -100,14 +99,14 @@ function CheckSigned(Action: () => void) {
     return null;
 }
 
-async function CheckRole(SignInErrorAction: () => void, PermissionErrorAction: () => void, roles: number[]) {
+async function CheckRole(SignInErrorAction: () => void, PermissionErrorAction: () => void, roles: string[]) {
     if (!isSigned()) {
         SignInErrorAction();
         return redirect("/")
     };
     try {
         const result = await requestAccount().toPromise();
-        if (!roles.includes(result!.positionId)) {
+        if (!roles.includes(result!.position)) {
             PermissionErrorAction();
             return redirect("/");
         };

@@ -2,7 +2,7 @@ export interface Employee {
     id: number,
     fullName: string,
     email: string,
-    positionId: number,
+    position: string,
     subdivision: string,
     status: string,
     peoplePartner?: number,
@@ -10,15 +10,22 @@ export interface Employee {
 }
 export interface UserRegistration {
     id: number,
-    username: string,
+    fullName: string,
     email: string,
-    bio: string,
-    password: string
+    position: string,
+    subdivision: string,
+    status: string,
+    peoplePartner?: number,
+    outOfOfficeBalance: number,
+    password: string,
 }
 
 export interface UserInput {
-    username: string,
-    email: string,
-    bio?: string,
-    password?: string
+    FullName: string,
+    Email: string,
+    Position: string,
+    Subdivision: string,
+    Status: string,
+    PeoplePartner?: number,
+    OutOfOfficeBalance: number
 }

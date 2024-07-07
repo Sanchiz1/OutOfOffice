@@ -36,16 +36,8 @@ export function createUserRequest(UserInput: UserInput) {
     );
 }
 
-export function updateUserRequest(UserInput: UserInput) {
-    return GetAjaxObservable(`/account`, "PATCH", true, {'Content-Type': 'application/json'}, false, UserInput).pipe(
-        map(() => {
-            return "User updated successfully";
-        })
-    );
-}
-
-export function updateUserRoleRequest(userId: number, roleId: number) {
-    return GetAjaxObservable(`/users/role`, "PATCH", true, {'Content-Type': 'application/json'}, true, {userId: userId, roleId: roleId}).pipe(
+export function updateUserRequest(id: number, UserInput: UserInput) {
+    return GetAjaxObservable(`/employee/${id}`, "put", true, {'Content-Type': 'application/json'}, false, UserInput).pipe(
         map(() => {
             return "User updated successfully";
         })

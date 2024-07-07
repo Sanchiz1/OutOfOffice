@@ -4,16 +4,11 @@ GO
 
 USE OutOfOfficeDB;
 
-CREATE TABLE Positions (
-    Id INT PRIMARY KEY IDENTITY(1, 1),
-    Name NVARCHAR(Max) NOT NULL
-);
-
 CREATE TABLE Employees (
     Id INT PRIMARY KEY IDENTITY(1, 1),
     FullName NVARCHAR(MAX) NOT NULL,
     Email NVARCHAR(255) NOT NULL,
-    PositionId INT FOREIGN KEY REFERENCES Positions(Id) NOT NULL,
+    Position NVARCHAR(Max) NOT NULL,
     Subdivision NVARCHAR(Max) NOT NULL,
     Status NVARCHAR(50) NOT NULL,
     PeoplePartner INT FOREIGN KEY REFERENCES Employees(Id),

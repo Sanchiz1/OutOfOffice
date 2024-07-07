@@ -24,7 +24,7 @@ import CallMissedOutgoingIcon from '@mui/icons-material/CallMissedOutgoing';
 import { Outlet, Link as RouterLink, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Logout, isSigned } from '../API/loginRequests';
 import { setCookie } from '../Helpers/CookieHelper';
-import { getUserAccount, setPositionsAction } from '../Redux/Epics/AccountEpics';
+import { getUserAccount } from '../Redux/Epics/AccountEpics';
 import { getAccount, setLogInError, setPermissionError } from '../Redux/Reducers/AccountReducer';
 import { RootState } from '../Redux/store';
 import { Employee } from '../Types/Employee';
@@ -52,7 +52,6 @@ export default function Header() {
   useEffect(() => {
     if (isSigned()) {
       dispatch(getUserAccount());
-      dispatch(setPositionsAction());
     }
   }, [])
 

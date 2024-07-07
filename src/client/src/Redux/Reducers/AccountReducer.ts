@@ -1,20 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Employee } from "../../Types/Employee"
-import { Position } from "../../Types/Position";
 
 export interface AccountState {
     Account: Employee,
     GlobalError: string,
     PermissionError: string,
-    LogInError: string,
-    Positions: Position[]
+    LogInError: string
 }
 const initialState: AccountState = {
     Account: {} as Employee,
     GlobalError: '',
     PermissionError: '',
-    LogInError: '',
-    Positions: []
+    LogInError: ''
 };
 
 export const AccountSlice = createSlice({
@@ -36,11 +33,7 @@ export const AccountSlice = createSlice({
         setGlobalError: (state,
             action: PayloadAction<string>) => {
             state.GlobalError = action.payload;
-        },
-        setPostions: (state,
-            action: PayloadAction<Position[]>) => {
-            state.Positions = action.payload;
-        },
+        }
     }
 });
 
@@ -48,7 +41,6 @@ export const {
     getAccount,
     setLogInError,
     setGlobalError,
-    setPermissionError,
-    setPostions
+    setPermissionError
 } = AccountSlice.actions;
 export default AccountSlice.reducer;

@@ -1,6 +1,6 @@
+import SearchIcon from '@mui/icons-material/Search';
 import { Button, InputAdornment, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
-import SearchIcon from '@mui/icons-material/Search';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Paper from '@mui/material/Paper';
 import Switch from '@mui/material/Switch';
@@ -16,14 +16,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Employee } from '../../Types/Employee';
-import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 import { requestSearchedEmployees } from '../../API/employeeRequests';
-import { Position, Positions } from '../../Types/Position';
-import { requestPositions } from '../../API/positionRequests';
-import { RootState } from '../../Redux/store';
+import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
+import { Employee } from '../../Types/Employee';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -70,7 +67,7 @@ const headCells: readonly HeadCell[] = [
     label: 'Email',
   },
   {
-    id: 'positionId',
+    id: 'position',
     numeric: false,
     disablePadding: false,
     label: 'Position',
@@ -206,7 +203,6 @@ export default function EmployeesDataTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [search, setSearch] = React.useState<string>('');
-  const Postions = useSelector((state: RootState) => state.account.Positions);
 
   React.useEffect(() => {
     requestSearchedEmployees(page * rowsPerPage, rowsPerPage, search, orderBy, order).subscribe({
@@ -299,7 +295,7 @@ export default function EmployeesDataTable() {
                       {row.fullName}
                     </TableCell>
                     <TableCell align="left">{row.email}</TableCell>
-                    <TableCell align="left">{Postions.find(p => p.id === row.positionId)?.name}</TableCell>
+                    <TableCell align="left">{row.position}</TableCell>
                     <TableCell align="left">{row.subdivision}</TableCell>
                     <TableCell align="left">{row.outOfOfficeBalance}</TableCell>
                     <TableCell align="left">{row.status}</TableCell>
