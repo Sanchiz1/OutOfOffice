@@ -23,7 +23,7 @@ public class EmployeeController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<Employee>> Get(int take, int skip, string orderBy, string order = "ASC")
     {
-        return await _employeeRepository.Get(take, skip, orderBy, order);
+        return await _employeeRepository.Get(skip, take, orderBy, order);
     }
 
     [HttpGet]

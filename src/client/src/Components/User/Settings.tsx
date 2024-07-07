@@ -69,7 +69,7 @@ export default function Settings() {
             setError('Fill password field');
             return;
         }
-        DeleteAccountRequest(Account.Id, password).subscribe({
+        DeleteAccountRequest(Account.id, password).subscribe({
             next() {
                 Logout();
                 dispatch(getAccount({} as Employee)); navigator('/');

@@ -1,19 +1,20 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouterProvider, createBrowserRouter, redirect } from 'react-router-dom';
-import { isSigned } from '../API/loginRequests';
 import { requestAccount } from '../API/employeeRequests';
+import { isSigned } from '../API/loginRequests';
 import { ShowFailure } from '../Helpers/SnackBarHelper';
 import { setGlobalError, setLogInError, setPermissionError } from '../Redux/Reducers/AccountReducer';
 import { RootState } from '../Redux/store';
+import EmployeesPage from './Employees/EmployeesPage';
+import CreateLeaveRequest from './LeaveRequest/CreateLeaveRequest';
+import LeaveRequestPage from './LeaveRequest/LeaveRequestPage';
 import Main from './Main';
 import Header from './Navbar';
 import SignIn from './Sign/Sign-in';
-import SignUp from './Sign/Sign-up';
 import Settings from './User/Settings';
 import UserPage from './User/UserPage';
 import NotFoundPage from './UtilComponents/NotFoundPage';
-import EmployeesPage from './Employees/EmployeesPage';
 
 const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void) => createBrowserRouter([
     {
@@ -21,15 +22,27 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
         children: [
             {
                 path: "/",
-                element: <Main />
+                element: <Main />,
+                loader: async () => CheckSigned(SignInErrorAction)
             },
             {
                 path: "/employee/:EmployeeId",
-                element: <UserPage />
+                element: <UserPage />,
+                loader: async () => CheckSigned(SignInErrorAction)
             },
             {
                 path: "/employees",
                 element: <EmployeesPage />,
+                loader: async () => CheckSigned(SignInErrorAction)
+            },
+            {
+                path: "/createLeaveRequest",
+                element: <CreateLeaveRequest />,
+                loader: async () => CheckSigned(SignInErrorAction)
+            },
+            {
+                path: "/leaveRequest/:LeaveRequestId",
+                element: <LeaveRequestPage />,
                 loader: async () => CheckSigned(SignInErrorAction)
             },
             {
@@ -40,10 +53,6 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
             {
                 path: "/Sign-in",
                 element: <SignIn />,
-            },
-            {
-                path: "/Sign-up",
-                element: <SignUp />,
             },
             {
                 path:"*",

@@ -15,7 +15,6 @@ import { RootState } from '../../Redux/store';
 import { Employee, UserInput } from '../../Types/Employee';
 import { BootstrapInput } from '../UtilComponents/BootstrapInput';
 import NotFoundPage from '../UtilComponents/NotFoundPage';
-import UploadAvatar from './UploadAvatar';
 
 const validUsernamePattern = /^[a-zA-Z0-9_]+$/;
 const validEmailPattern = /^(?=.{0,64}$)[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -127,7 +126,7 @@ export default function UserPage() {
         });
         setError('');
         setOpenEdit(false);
-        navigator("/employee/" + UserId);
+        navigator("/employee/" + EmployeeId);
       },
       error(err) {
         setError(err.message)
@@ -146,7 +145,7 @@ export default function UserPage() {
       setError('Fill password field');
       return;
     }
-    DeleteUserRequest(employee!.Id, password).subscribe({
+    DeleteUserRequest(employee!.id!, password).subscribe({
       next(value) {
         enqueueSnackbar(value, {
           variant: 'success', anchorOrigin: {
@@ -272,10 +271,9 @@ export default function UserPage() {
                                       </Button>
                                     </Box>
                                     <Divider sx={{ my: 2 }} />
-                                    <UploadAvatar></UploadAvatar>
                                   </Collapse>
                                 </>}
-                              {(Account.Role === 'Administrator' && employee.Role !== 'Administrator') &&
+                              {(Account.positionId === 1 && employee.positionId !== 2) &&
                                 <>
                                   <Divider sx={{ mt: 2 }} />
                                   <Button onClick={() => setOpenEdit(!openEdit)}>Settings</Button>
@@ -320,12 +318,6 @@ export default function UserPage() {
                           }}
                         >
                           <Grid item xs={12} sx={{ mb: 2 }}>
-                            <Typography variant="subtitle1" color="text.primary" component="p">
-                              {employee.Posts} posts
-                            </Typography>
-                            <Typography variant="subtitle1" color="text.primary" component="p">
-                              {employee.Comments} comments
-                            </Typography>
                           </Grid>
                           <Divider sx={{ mb: 1 }} />
                           <Grid item xs={12} sx={{
@@ -334,9 +326,6 @@ export default function UserPage() {
                             flexDirection: 'row',
                             alignItems: 'stretch',
                           }}>
-                            <Typography variant="subtitle1" color="text.primary" component="p" sx={{ display: 'flex', alignItems: 'center' }}>
-                              {employee.Username}`s posts
-                            </Typography>
                             <Typography variant="subtitle1" sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
                               <Select
                                 value={order}

@@ -1,9 +1,10 @@
-﻿using Api.Models;
+﻿using Api.Interfaces;
+using Api.Models;
 using Dapper;
 
 namespace Api.Data.Repositories;
 
-public class LeaveRequestRepository
+public class LeaveRequestRepository : ILeaveRequestRepository
 {
     private readonly DapperContext _dapperContext;
 
@@ -11,6 +12,7 @@ public class LeaveRequestRepository
     {
         _dapperContext = context;
     }
+
     public async Task<List<LeaveRequest>> Get(int skip, int take, string orderBy, string order = "ASC")
     {
         string query = $@"SELECT l.Id,
@@ -27,6 +29,27 @@ public class LeaveRequestRepository
         using var connection = _dapperContext.CreateConnection();
 
         var result = await connection.QueryAsync<LeaveRequest>(query, new { skip, take });
+
+        return result.ToList();
+    }
+
+    public async Task<List<LeaveRequest>> GetByEmployeeId(int employeeId, int skip, int take, string orderBy, string order = "ASC")
+    {
+        string query = $@"SELECT l.Id,
+                        l.EmployeeId,
+                        l.AbsenceReason,
+                        l.StartDate,
+                        l.EndDate,
+                        l.Comment,
+                        l.Status
+                        FROM LeaveRequests l
+                        WHERE l.EmployeeId = @employeeId
+                        ORDER BY {orderBy} {order}
+                        OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.QueryAsync<LeaveRequest>(query, new { skip, take, employeeId });
 
         return result.ToList();
     }
@@ -60,7 +83,7 @@ public class LeaveRequestRepository
                         l.Comment,
                         l.Status
                         FROM LeaveRequests l
-                        WHERE t.Id = @id";
+                        WHERE l.Id = @id";
 
         using var connection = _dapperContext.CreateConnection();
 
@@ -72,10 +95,10 @@ public class LeaveRequestRepository
     public async Task<int> Add(LeaveRequest leaveRequest)
     {
         string query = $@"INSERT INTO LeaveRequests
-                        (EmployeeId, AbsenceReason, StartDate, Comment, Status)
+                        (EmployeeId, AbsenceReason, StartDate, EndDate, Comment, Status)
                         OUTPUT INSERTED.Id
                         VALUES
-                        (@EmployeeId, @AbsenceReason, @EndDate, @Comment, @Status)";
+                        (@EmployeeId, @AbsenceReason, @EndDate, @EndDate, @Comment, @Status)";
 
         using var connection = _dapperContext.CreateConnection();
 

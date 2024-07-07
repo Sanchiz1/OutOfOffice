@@ -57,7 +57,7 @@ public class ApprovalRequestRepository
                         a.Status,
                         a.Comment
                         FROM ApprovalRequests a
-                        WHERE t.Id = @id";
+                        WHERE a.Id = @id";
 
         using var connection = _dapperContext.CreateConnection();
 
