@@ -16,9 +16,13 @@ namespace Api.Controllers;
 public class LeaveRequestController : ControllerBase
 {
     private readonly ILeaveRequestRepository _leaveRequestRepository;
-    public LeaveRequestController(ILeaveRequestRepository leaveRequestRepository)
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly IApprovalRequestRepository _approvalRequestRepository;
+    public LeaveRequestController(ILeaveRequestRepository leaveRequestRepository, IEmployeeRepository employeeRepository, IApprovalRequestRepository approvalRequestRepository)
     {
         _leaveRequestRepository = leaveRequestRepository;
+        _employeeRepository = employeeRepository;
+        _approvalRequestRepository = approvalRequestRepository;
     }
 
 
@@ -119,13 +123,13 @@ public class LeaveRequestController : ControllerBase
     [Route("{id}/submit")]
     public async Task<ActionResult> SubmitLeaveRequest(int id)
     {
-        var leaveRequest = await _leaveRequestRepository.GetById(id);
-
-        if (leaveRequest is null) return NotFound();
-
         var userId = User.GetUserId();
 
         if (userId == 0) return Unauthorized();
+
+        var leaveRequest = await _leaveRequestRepository.GetById(id);
+
+        if (leaveRequest is null) return NotFound();
 
         if (userId != leaveRequest.EmployeeId) return BadRequest(new Error("Only owner can submit leave request"));
 
@@ -134,6 +138,32 @@ public class LeaveRequestController : ControllerBase
         leaveRequest.Status = LeaveRequestStatuses.Submitted;
 
         await _leaveRequestRepository.Update(leaveRequest);
+
+        var employee = await _employeeRepository.GetById(userId);
+
+        if (employee is null) return NotFound(new Error("Employee not found"));
+
+        var projectManagers = await _employeeRepository.GetAllProjectManagers(userId, "Id");
+
+        foreach (var projectManager in projectManagers)
+        {
+            var projectManagerApprovalRequest = new ApprovalRequest()
+            {
+                ApproverId = projectManager.Id,
+                LeaveRequestId = leaveRequest.Id,
+            };
+
+            await _approvalRequestRepository.Add(projectManagerApprovalRequest);
+        }
+
+        if (employee.PeoplePartner is null) return Ok();
+
+        var peoplePartnerApprovalRequest = new ApprovalRequest()
+        {
+            ApproverId = (int)employee.PeoplePartner,
+            LeaveRequestId = leaveRequest.Id,
+        };
+        await _approvalRequestRepository.Add(peoplePartnerApprovalRequest);
 
         return Ok();
     }

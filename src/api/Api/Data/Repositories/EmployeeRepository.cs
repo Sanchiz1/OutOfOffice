@@ -106,6 +106,38 @@ public class EmployeeRepository : IEmployeeRepository
         return result.ToList();
     }
 
+    public async Task<List<Employee>> GetAllProjectManagers(int employeeId, string orderBy, string order = "ASC")
+    {
+        string query = $@"SELECT e.Id,
+                        e.Fullname,
+                        e.Email,
+                        e.Position,
+                        e.Subdivision,
+                        e.Status,
+                        e.PeoplePartner,
+                        e.OutOfOfficeBalance
+                        FROM EmployeeProject pe
+                        INNER JOIN Projects p ON p.Id = pe.ProjectId
+                        INNER JOIN Employees e ON e.Id = p.ProjectManagerId
+                        WHERE pe.EmployeeId = @employeeId
+                        GROUP BY e.Id,
+                        e.Fullname,
+                        e.Email,
+                        e.Position,
+                        e.Subdivision,
+                        e.Status,
+                        e.PeoplePartner,
+                        e.OutOfOfficeBalance
+                        ORDER BY {orderBy} {order}
+                        OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.QueryAsync<Employee>(query, new { employeeId });
+
+        return result.ToList();
+    }
+
     public async Task<Employee?> GetById(int id)
     {
         string query = $@"SELECT e.Id,
