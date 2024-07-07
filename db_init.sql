@@ -43,3 +43,9 @@ CREATE TABLE Projects (
     Comment NVARCHAR(MAX),
     Status NVARCHAR(50) NOT NULL
 );
+
+CREATE TABLE EmployeeProject (
+    ProjectId INT FOREIGN KEY REFERENCES Projects(Id),
+    EmployeeId INT FOREIGN KEY REFERENCES Employees(Id),
+	PRIMARY KEY(ProjectId, EmployeeId)
+);

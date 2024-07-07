@@ -225,11 +225,11 @@ export default function Header() {
               </ListItemIcon>
               Employees
             </MenuItem>
-            <MenuItem onClick={() => { navigator('/Settings'); handleClose(); }}>
+            <MenuItem onClick={() => { navigator('/Projects'); handleClose(); }}>
               <ListItemIcon>
-                <Settings fontSize="small" />
+                <EngineeringIcon fontSize="small" />
               </ListItemIcon>
-              Settings
+              Projects
             </MenuItem>
             <MenuItem onClick={() => {
               Logout();

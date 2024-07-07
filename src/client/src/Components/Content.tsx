@@ -12,9 +12,12 @@ import LeaveRequestPage from './LeaveRequest/LeaveRequestPage';
 import Main from './Main';
 import Header from './Navbar';
 import SignIn from './Sign/Sign-in';
-import Settings from './User/Settings';
 import UserPage from './User/UserPage';
 import NotFoundPage from './UtilComponents/NotFoundPage';
+import ProjectsPage from './Projects/ProjectsPage';
+import CreateProject from './Projects/CreateProjectPage';
+import ProjectPage from './Projects/ProjectPage';
+import AddToProjectPage from './Projects/AddToProjectPage';
 
 const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void) => createBrowserRouter([
     {
@@ -35,6 +38,26 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
                 loader: async () => CheckSigned(SignInErrorAction)
             },
             {
+                path: "/createProject",
+                element: <CreateProject />,
+                loader: async () => CheckSigned(SignInErrorAction)
+            },
+            {
+                path: "/projects",
+                element: <ProjectsPage />,
+                loader: async () => CheckSigned(SignInErrorAction)
+            },
+            {
+                path: "/project/:ProjectId",
+                element: <ProjectPage />,
+                loader: async () => CheckSigned(SignInErrorAction)
+            },
+            {
+                path: "/project/:ProjectId/Add",
+                element: <AddToProjectPage />,
+                loader: async () => CheckSigned(SignInErrorAction)
+            },
+            {
                 path: "/createLeaveRequest",
                 element: <CreateLeaveRequest />,
                 loader: async () => CheckSigned(SignInErrorAction)
@@ -42,11 +65,6 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
             {
                 path: "/leaveRequest/:LeaveRequestId",
                 element: <LeaveRequestPage />,
-                loader: async () => CheckSigned(SignInErrorAction)
-            },
-            {
-                path: "/settings",
-                element: <Settings />,
                 loader: async () => CheckSigned(SignInErrorAction)
             },
             {

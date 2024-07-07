@@ -1,61 +1,64 @@
-import CloseIcon from '@mui/icons-material/Close';
-import { Alert, Box, Button, Collapse, Container, CssBaseline, IconButton, LinearProgress, Paper, TextField } from '@mui/material';
+import { Box, Button, Container, CssBaseline, LinearProgress, MenuItem, Paper, Select, SelectChangeEvent, TextField } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { cancelLeaveRequest, createLeaveRequest, getLeaveRequestById, submitLeaveRequest, updateLeaveRequest } from '../../API/leaveRequestRequests';
-import { LeaveRequest } from '../../Types/LeaveRequest';
-import NotFoundPage from '../UtilComponents/NotFoundPage';
+import { cancelLeaveRequest, getLeaveRequestById, submitLeaveRequest, updateLeaveRequest } from '../../API/leaveRequestRequests';
 import { GetDateString } from '../../Helpers/DateFormatHelper';
 import { ShowFailure, ShowSuccess } from '../../Helpers/SnackBarHelper';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
+import { LeaveRequest } from '../../Types/LeaveRequest';
+import NotFoundPage from '../UtilComponents/NotFoundPage';
+import { getProjectById, updateProject } from '../../API/projectRequests';
+import { Project } from '../../Types/Project';
+import ProjectEmployeesDataTable from './ProjectEmployeesDataTable';
 
-export default function LeaveRequestPage() {
-    let { LeaveRequestId } = useParams();
+export default function ProjectPage() {
+    let { ProjectId } = useParams();
     const navigator = useNavigate()
     const [leaveRequestExists, setLeaveRequestExists] = useState(true);
-    const [leaveRequest, setLeaveRequest] = useState<LeaveRequest>();
+    const [project, setProject] = useState<Project>();
     const User = useSelector((state: RootState) => state.account.Account);
+    const [status, setStatus] = useState(project?.status!);
 
-    const fetchLeaveRequest = () =>
-        getLeaveRequestById(parseInt(LeaveRequestId!)).subscribe({
+
+    const fetchProject = () =>
+        getProjectById(parseInt(ProjectId!)).subscribe({
             next(user) {
                 if (user === null) {
                     setLeaveRequestExists(false);
                     return;
                 }
-                setLeaveRequest(user);
+                setProject(user);
+                setStatus(user.status);
             },
             error(err) {
             },
         })
 
     useEffect(() => {
-        fetchLeaveRequest();
-    }, [LeaveRequestId])
+        fetchProject();
+    }, [ProjectId])
 
     // edit
     const [openEdit, setOpenEdit] = useState(false);
-    const [openCategortyEdit, setOpenCategortyEdit] = useState(false);
     const [error, setError] = useState<String>('');
-    const [absenceReasonError, SetAbsenceReasonError] = useState('');
+    const [projectTypeError, setProjectTypeError] = useState('');
     const [startDateError, SetStartDateError] = useState('');
     const [endDateError, SetEndDateError] = useState('');
 
     const handleSubmitEdit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        const absenceReason = data.get('absenceReason')!.toString().trim();
+        const projectType = data.get('projectType')!.toString().trim();
         const startDate = data.get('startDate')!.toString();
         const endDate = data.get('endDate')!.toString().trim();
         const comment = data.get('comment')!.toString().trim();
 
-        if (absenceReason.length === 0) {
-            SetAbsenceReasonError('Fill absence reason!');
+        if (projectType.length === 0) {
+            setProjectTypeError('Fill project type!');
             return;
         }
 
@@ -64,17 +67,12 @@ export default function LeaveRequestPage() {
             return;
         }
 
-        if (endDate.length === 0) {
-            SetEndDateError('Fill end date!');
-            return;
-        }
-
-        updateLeaveRequest(leaveRequest?.id!, absenceReason, new Date(startDate), new Date(endDate), comment).subscribe({
+        updateProject(project?.id!, projectType, status, new Date(startDate), endDate ? new Date(endDate) : undefined, comment).subscribe({
             next(value) {
                 ShowSuccess(value);
                 setError('');
                 setOpenEdit(false);
-                fetchLeaveRequest();
+                fetchProject();
             },
             error(err) {
                 ShowFailure(err.message);
@@ -82,35 +80,14 @@ export default function LeaveRequestPage() {
         })
     }
 
-    const handleCancelLeaveRequest = () => {
-        cancelLeaveRequest(leaveRequest?.id!).subscribe({
-            next(value) {
-                ShowSuccess(value);
-                fetchLeaveRequest();
-            },
-            error(err) {
-                ShowFailure(err.message);
-            },
-        })
-    }
-
-    const handleSubmitLeaveRequest = () => {
-        submitLeaveRequest(leaveRequest?.id!).subscribe({
-            next(value) {
-                ShowSuccess(value);
-                fetchLeaveRequest();
-            },
-            error(err) {
-                ShowFailure(err.message);
-            },
-        })
-    }
-
+    const handleStatusChange = (event: SelectChangeEvent) => {
+        setStatus(event.target.value);
+    };
     return (
         <>
             {leaveRequestExists ?
                 <>
-                    {leaveRequest != undefined ?
+                    {project != undefined ?
                         <Box sx={{ display: 'flex' }}>
                             <CssBaseline />
                             <Box
@@ -132,13 +109,13 @@ export default function LeaveRequestPage() {
                                     <Grid container spacing={3}>
                                         <Grid item xs={12} md={12} lg={12}>
                                             <Typography variant="h5" color="text.secondary" component="p" gutterBottom>
-                                                Leave request
+                                                Project
                                             </Typography>
                                             <Divider />
                                         </Grid>
                                         <Divider sx={{ mb: 1 }} />
 
-                                        <Grid item xs={12} md={12} lg={12}>
+                                        <Grid item xs={12} md={12} lg={12} sx={{ mb: 3 }}>
                                             <Paper sx={{
                                                 p: 1,
                                                 width: 1,
@@ -149,15 +126,15 @@ export default function LeaveRequestPage() {
                                                             <TextField
                                                                 margin="normal"
                                                                 id="outlined-multiline-flexible"
-                                                                label="Absence reason"
-                                                                name="absenceReason"
+                                                                label="Project type"
+                                                                name="projectType"
                                                                 required
                                                                 fullWidth
                                                                 inputProps={{ maxLength: 500 }}
-                                                                error={absenceReasonError !== ''}
-                                                                onFocus={() => SetAbsenceReasonError('')}
-                                                                helperText={absenceReasonError}
-                                                                defaultValue={leaveRequest.absenceReason}
+                                                                error={projectTypeError !== ''}
+                                                                onFocus={() => setProjectTypeError('')}
+                                                                helperText={projectTypeError}
+                                                                defaultValue={project.projectType}
                                                             />
                                                             <TextField
                                                                 margin="normal"
@@ -172,7 +149,7 @@ export default function LeaveRequestPage() {
                                                                 error={startDateError !== ''}
                                                                 onFocus={() => SetStartDateError('')}
                                                                 helperText={startDateError}
-                                                                defaultValue={new Date(leaveRequest.startDate).toISOString().split('T')[0]}
+                                                                defaultValue={new Date(project.startDate).toISOString().split('T')[0]}
                                                             />
                                                             <TextField
                                                                 margin="normal"
@@ -181,26 +158,36 @@ export default function LeaveRequestPage() {
                                                                 placeholder=''
                                                                 name="endDate"
                                                                 type='date'
-                                                                required
                                                                 fullWidth
                                                                 InputLabelProps={{ shrink: true }}
                                                                 error={endDateError !== ''}
                                                                 onFocus={() => SetEndDateError('')}
                                                                 helperText={endDateError}
-                                                                defaultValue={new Date(leaveRequest.endDate).toISOString().split('T')[0]}
                                                             />
                                                             <TextField
                                                                 margin="normal"
                                                                 id="outlined-multiline-flexible"
                                                                 label="Comment"
                                                                 name="comment"
-                                                                required
                                                                 fullWidth
                                                                 inputProps={{ maxLength: 5000 }}
                                                                 multiline
                                                                 minRows={4}
-                                                                defaultValue={leaveRequest.comment}
+                                                                defaultValue={project.comment}
                                                             />
+
+                                                            <Select
+                                                                required
+                                                                labelId="role-label"
+                                                                id="role"
+                                                                value={status}
+                                                                fullWidth
+                                                                onChange={handleStatusChange}
+                                                                sx={{ my: 1 }}
+                                                            >
+                                                                <MenuItem value={"Active"}>Active</MenuItem>
+                                                                <MenuItem value={"Inactive"}>Inactive</MenuItem>
+                                                            </Select>
                                                             <Box sx={{ my: 1, display: 'flex' }}>
                                                                 <Button
                                                                     color='secondary'
@@ -222,56 +209,44 @@ export default function LeaveRequestPage() {
                                                     :
                                                     <>
                                                         <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column' }}>
-                                                            <Typography>Reason: {leaveRequest.absenceReason}</Typography>
-                                                            <Typography>From {GetDateString(new Date(leaveRequest.startDate))} to {GetDateString(new Date(leaveRequest.endDate))}</Typography>
-                                                            <Typography>Status: {leaveRequest.status}</Typography>
+                                                            <Typography>Project type: {project.projectType}</Typography>
+                                                            <Typography>From {GetDateString(new Date(project.startDate))} {project.endDate ? `to ${GetDateString(new Date(project.endDate))}` : ""}</Typography>
+                                                            <Typography>Status: {project.status}</Typography>
                                                             <Divider sx={{ mb: 3 }} />
-                                                            {leaveRequest.comment &&
+                                                            {project.comment &&
                                                                 <>
                                                                     <Typography>Comment:</Typography>
-                                                                    <Typography>{leaveRequest.comment}</Typography>
+                                                                    <Typography>{project.comment}</Typography>
                                                                 </>
                                                             }
 
-                                                            {User.id === leaveRequest.employeeId &&
+                                                            {(User.id === project.projectManagerId || User.position === "Administrator") &&
                                                                 <Box sx={{ ml: 'auto', mt: 3, width: 'fit-content', display: 'flex', flexDirection: 'row' }}>
-                                                                    {leaveRequest.status !== "Submitted" &&
-                                                                        <Button
-                                                                            fullWidth
-                                                                            variant="outlined"
-                                                                            sx={{ mr: 1 }}
-                                                                            onClick={handleSubmitLeaveRequest}
-                                                                        >
-                                                                            Submit
-                                                                        </Button>
-                                                                    }
-                                                                    {leaveRequest.status === "Submitted" &&
-                                                                        <Button
-                                                                            fullWidth
-                                                                            variant="outlined"
-                                                                            sx={{ mr: 1 }}
-                                                                            onClick={handleCancelLeaveRequest}
-                                                                        >
-                                                                            Cancel
-                                                                        </Button>
-                                                                    }
-                                                                    {leaveRequest.status !== "Submitted" &&
-                                                                        <Button
-                                                                            fullWidth
-                                                                            variant="outlined"
-                                                                            onClick={() => setOpenEdit(!openEdit)}
-                                                                        >
-                                                                            Edit
-                                                                        </Button>
-                                                                    }
+                                                                    <Button
+                                                                        fullWidth
+                                                                        variant="outlined"
+                                                                        onClick={() => setOpenEdit(!openEdit)}
+                                                                    >
+                                                                        Edit
+                                                                    </Button>
                                                                 </Box>
                                                             }
                                                         </Box>
                                                     </>
                                                 }
                                             </Paper>
+                                            <Box sx={{ mt: 3, width: 'fit-content', display: 'flex', flexDirection: 'row' }}>
+                                                <Button
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    onClick={() => navigator("/project/" + project.id + "/add")}
+                                                >
+                                                    AddUser
+                                                </Button>
+                                            </Box>
                                         </Grid>
                                     </Grid>
+                                    <ProjectEmployeesDataTable ProjectId={project.id}></ProjectEmployeesDataTable>
                                 </Container>
                             </Box>
                         </Box>

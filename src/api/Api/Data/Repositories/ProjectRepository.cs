@@ -1,9 +1,10 @@
-﻿using Api.Models;
+﻿using Api.Interfaces;
+using Api.Models;
 using Dapper;
 
 namespace Api.Data.Repositories;
 
-public class ProjectRepository
+public class ProjectRepository : IProjectRepository
 {
     private readonly DapperContext _dapperContext;
 
@@ -17,7 +18,7 @@ public class ProjectRepository
                         p.ProjectType,
                         p.StartDate,
                         p.EndDate,
-                        p.ProjectManager,
+                        p.ProjectManagerId,
                         p.Comment,
                         p.Status
                         FROM Projects p
@@ -37,7 +38,7 @@ public class ProjectRepository
                         p.ProjectType,
                         p.StartDate,
                         p.EndDate,
-                        p.ProjectManager,
+                        p.ProjectManagerId,
                         p.Comment,
                         p.Status
                         FROM Projects p
@@ -56,11 +57,11 @@ public class ProjectRepository
                         p.ProjectType,
                         p.StartDate,
                         p.EndDate,
-                        p.ProjectManager,
+                        p.ProjectManagerId,
                         p.Comment,
                         p.Status
                         FROM Projects p
-                        WHERE t.Id = @id";
+                        WHERE p.Id = @id";
 
         using var connection = _dapperContext.CreateConnection();
 
@@ -69,13 +70,26 @@ public class ProjectRepository
         return result.FirstOrDefault();
     }
 
+    public async Task<bool> IsInProject(int projectId, int employeeId)
+    {
+        string query = $@"SELECT 1
+                        FROM EmployeeProject pe
+                        WHERE pe.EmployeeId = @employeeId AND ProjectId = @projectId";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.ExecuteScalarAsync<bool>(query, new { projectId, employeeId });
+
+        return result;
+    }
+
     public async Task<int> Add(Project project)
     {
         string query = $@"INSERT INTO Projects
-                        (ProjectType, StartDate, EndDate, ProjectManager, Comment, Status)
+                        (ProjectType, StartDate, EndDate, ProjectManagerId, Comment, Status)
                         OUTPUT INSERTED.Id
                         VALUES
-                        (@ProjectType, @StartDate, @EndDate, @ProjectManager, @Comment, @Status)";
+                        (@ProjectType, @StartDate, @EndDate, @ProjectManagerId, @Comment, @Status)";
 
         using var connection = _dapperContext.CreateConnection();
 
@@ -91,7 +105,7 @@ public class ProjectRepository
                         ProjectType = @ProjectType,
                         StartDate = @StartDate,
                         EndDate = @EndDate,
-                        ProjectManager = @ProjectManager,
+                        ProjectManagerId = @ProjectManagerId,
                         Comment = @Comment,
                         Status = @Status
                         WHERE Id = @Id";
@@ -109,5 +123,27 @@ public class ProjectRepository
         using var connection = _dapperContext.CreateConnection();
 
         await connection.ExecuteAsync(query, new { id });
+    }
+
+    public async Task AddEmployeeToProject(int projectId, int employeeId)
+    {
+        string query = $@"INSERT INTO EmployeeProject
+                        (ProjectId, EmployeeId)
+                        VALUES
+                        (@projectId, @employeeId)";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        await connection.ExecuteAsync(query, new { projectId, employeeId });
+    }
+
+    public async Task RemoveEmployeeFromProject(int projectId, int employeeId)
+    {
+        string query = $@"DELETE FROM EmployeeProject
+                        WHERE ProjectId = @projectId AND EmployeeId = @employeeId";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        await connection.ExecuteAsync(query, new { projectId, employeeId });
     }
 }
