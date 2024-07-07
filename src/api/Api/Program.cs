@@ -15,6 +15,7 @@ builder.Services.AddSingleton<TokenService>();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddSingleton<ILeaveRequestRepository, LeaveRequestRepository>();
+builder.Services.AddSingleton<IProjectRepository, ProjectRepository>();
 
 builder.Services.AddSingleton<InitializationService>();
 

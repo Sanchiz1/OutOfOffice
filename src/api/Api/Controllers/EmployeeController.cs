@@ -50,7 +50,6 @@ public class EmployeeController : ControllerBase
         return user;
     }
 
-
     [HttpGet]
     [Route("search")]
     public async Task<ActionResult<IEnumerable<Employee>>> GetSearchedEmployees(int skip, int take, string search = "", string orderBy = "Id", string order = "ASC")
@@ -67,6 +66,13 @@ public class EmployeeController : ControllerBase
         if (user is null) return NotFound();
 
         return user;
+    }
+
+    [HttpGet]
+    [Route("project/{projectId}")]
+    public async Task<ActionResult<IEnumerable<Employee>>> GetSearchedEmployees(int projectId, int skip, int take, string search = "", string orderBy = "Id", string order = "ASC")
+    {
+        return await _employeeRepository.GetByProject(projectId, search, skip, take, orderBy, order);
     }
 
     [HttpPost]
