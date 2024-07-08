@@ -128,8 +128,7 @@ public class EmployeeRepository : IEmployeeRepository
                         e.Status,
                         e.PeoplePartner,
                         e.OutOfOfficeBalance
-                        ORDER BY {orderBy} {order}
-                        OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY";
+                        ORDER BY {orderBy} {order}";
 
         using var connection = _dapperContext.CreateConnection();
 
