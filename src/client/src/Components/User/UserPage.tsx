@@ -124,7 +124,7 @@ export default function UserPage() {
                   mt: 4, mb: 4, width: 1
                 }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={4} lg={4}>
+                    <Grid item xs={12}>
                       <Grid item xs={12}>
                         <Paper
                           sx={{
@@ -199,7 +199,7 @@ export default function UserPage() {
                                       value={status}
                                       fullWidth
                                       onChange={handleStatusChange}
-                                      sx={{ my:  1 }}
+                                      sx={{ my: 1 }}
                                     >
                                       <MenuItem value={"Active"}>Active</MenuItem>
                                       <MenuItem value={"Inactive"}>Inactive</MenuItem>
@@ -267,30 +267,6 @@ export default function UserPage() {
                                   <Divider sx={{ my: 2 }} />
                                 </Collapse>
                               </>}
-                          </Grid>
-                        </Paper>
-                      </Grid>
-                    </Grid>
-
-                    <Grid item xs={12} md={8} lg={8}>
-                      <Grid item xs={12} sx={{ mb: 2 }}>
-                        <Paper
-                          sx={{
-                            p: 1,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            height: 1,
-                          }}
-                        >
-                          <Grid item xs={12} sx={{ mb: 2 }}>
-                          </Grid>
-                          <Divider sx={{ mb: 1 }} />
-                          <Grid item xs={12} sx={{
-                            width: 1,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'stretch',
-                          }}>
                           </Grid>
                         </Paper>
                       </Grid>

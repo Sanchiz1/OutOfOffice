@@ -36,8 +36,8 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
             },
             {
                 path: "/employees",
-                element: <EmployeesPage />,
-                loader: async () => CheckSigned(SignInErrorAction)
+                element: <EmployeesPage />, 
+                loader: async () => CheckRole(SignInErrorAction, PermissionErrorAction, ["HR Manager", "Administrator"])
             },
             {
                 path: "/createProject",
@@ -47,7 +47,7 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
             {
                 path: "/projects",
                 element: <ProjectsPage />,
-                loader: async () => CheckSigned(SignInErrorAction)
+                loader: async () => CheckRole(SignInErrorAction, PermissionErrorAction, ["Project Manager", "Administrator"])
             },
             {
                 path: "/project/:ProjectId",
@@ -72,7 +72,7 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
             {
                 path: "/approvalRequests",
                 element: <ApprovalRequestsPage />,
-                loader: async () => CheckSigned(SignInErrorAction)
+                loader: async () => CheckRole(SignInErrorAction, PermissionErrorAction, ["Project Manager", "HR Manager", "Administrator"])
             },
             {
                 path: "/approvalRequest/:ApprovalRequestId",

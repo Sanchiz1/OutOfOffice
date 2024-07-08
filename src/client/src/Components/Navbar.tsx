@@ -208,30 +208,33 @@ export default function Header() {
               <Avatar /> Profile
             </MenuItem>
             <Divider />
-            <MenuItem onClick={() => { navigator('/LeaveRequests'); handleClose(); }}>
-              <ListItemIcon>
-                <CallMissedOutgoingIcon fontSize="small" />
-              </ListItemIcon>
-              LeaveRequests
-            </MenuItem>
-            <MenuItem onClick={() => { navigator('/ApprovalRequests'); handleClose(); }}>
-              <ListItemIcon>
-                <CheckCircleIcon fontSize="small" />
-              </ListItemIcon>
-              ApprovalRequests
-            </MenuItem>
-            <MenuItem onClick={() => { navigator('/Employees'); handleClose(); }}>
-              <ListItemIcon>
-                <EngineeringIcon fontSize="small" />
-              </ListItemIcon>
-              Employees
-            </MenuItem>
-            <MenuItem onClick={() => { navigator('/Projects'); handleClose(); }}>
-              <ListItemIcon>
-                <WorkIcon fontSize="small" />
-              </ListItemIcon>
-              Projects
-            </MenuItem>
+            {
+              ["HR Manager", "Project Manager", "Administrator"].includes(User.position) &&
+              <MenuItem onClick={() => { navigator('/ApprovalRequests'); handleClose(); }}>
+                <ListItemIcon>
+                  <CheckCircleIcon fontSize="small" />
+                </ListItemIcon>
+                ApprovalRequests
+              </MenuItem>
+            }
+            {
+              ["HR Manager", "Administrator"].includes(User.position) &&
+              <MenuItem onClick={() => { navigator('/Employees'); handleClose(); }}>
+                <ListItemIcon>
+                  <EngineeringIcon fontSize="small" />
+                </ListItemIcon>
+                Employees
+              </MenuItem>
+            }
+            {
+              ["Project Manager", "Administrator"].includes(User.position) &&
+              <MenuItem onClick={() => { navigator('/Projects'); handleClose(); }}>
+                <ListItemIcon>
+                  <WorkIcon fontSize="small" />
+                </ListItemIcon>
+                Projects
+              </MenuItem>
+            }
             <MenuItem onClick={() => {
               Logout();
               dispatch(getAccount({} as Employee)); navigator(location); handleClose()
