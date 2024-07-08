@@ -12,7 +12,7 @@ Application for managing projects and employees` leave requests.
    ```sh
    git clone https://github.com/Sanchiz1/cryptoview.git
 
-2. Create SQL Server database by running db_init.sql 
+2. Create SQL Server database by running db_init.sql and update connection string in **appsettings.json** 
 
 3. Navigate to the API project directory:
 
