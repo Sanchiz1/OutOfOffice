@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CallMissedOutgoingIcon from '@mui/icons-material/CallMissedOutgoing';
+import WorkIcon from '@mui/icons-material/Work';
 import { Outlet, Link as RouterLink, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Logout, isSigned } from '../API/loginRequests';
 import { setCookie } from '../Helpers/CookieHelper';
@@ -227,7 +228,7 @@ export default function Header() {
             </MenuItem>
             <MenuItem onClick={() => { navigator('/Projects'); handleClose(); }}>
               <ListItemIcon>
-                <EngineeringIcon fontSize="small" />
+                <WorkIcon fontSize="small" />
               </ListItemIcon>
               Projects
             </MenuItem>

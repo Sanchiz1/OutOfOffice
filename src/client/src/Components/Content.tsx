@@ -18,6 +18,8 @@ import ProjectsPage from './Projects/ProjectsPage';
 import CreateProject from './Projects/CreateProjectPage';
 import ProjectPage from './Projects/ProjectPage';
 import AddToProjectPage from './Projects/AddToProjectPage';
+import ApprovalRequestsPage from './ApprovalRequests/ApprovalRequestsPage';
+import ApprovalRequestPage from './ApprovalRequests/ApprovalRequestPage';
 
 const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void) => createBrowserRouter([
     {
@@ -65,6 +67,16 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
             {
                 path: "/leaveRequest/:LeaveRequestId",
                 element: <LeaveRequestPage />,
+                loader: async () => CheckSigned(SignInErrorAction)
+            },
+            {
+                path: "/approvalRequests",
+                element: <ApprovalRequestsPage />,
+                loader: async () => CheckSigned(SignInErrorAction)
+            },
+            {
+                path: "/approvalRequest/:ApprovalRequestId",
+                element: <ApprovalRequestPage />,
                 loader: async () => CheckSigned(SignInErrorAction)
             },
             {

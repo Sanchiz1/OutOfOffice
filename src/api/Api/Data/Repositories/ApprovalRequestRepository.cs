@@ -16,7 +16,6 @@ public class ApprovalRequestRepository : IApprovalRequestRepository
     {
         string query = $@"SELECT a.Id,
                         a.ApproverId,
-                        a.PositionId,
                         a.LeaveRequestId,
                         a.Status,
                         a.Comment
@@ -31,11 +30,29 @@ public class ApprovalRequestRepository : IApprovalRequestRepository
         return result.ToList();
     }
 
+    public async Task<List<ApprovalRequest>> GetByApprover(int approverId, int skip, int take, string orderBy, string order = "ASC")
+    {
+        string query = $@"SELECT a.Id,
+                        a.ApproverId,
+                        a.LeaveRequestId,
+                        a.Status,
+                        a.Comment
+                        FROM ApprovalRequests a
+                        WHERE a.ApproverId = @approverId
+                        ORDER BY {orderBy} {order}
+                        OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.QueryAsync<ApprovalRequest>(query, new { approverId, skip, take });
+
+        return result.ToList();
+    }
+
     public async Task<List<ApprovalRequest>> GetAll(string orderBy, string order = "ASC")
     {
         string query = $@"SELECT a.Id,
                         a.ApproverId,
-                        a.PositionId,
                         a.LeaveRequestId,
                         a.Status,
                         a.Comment
@@ -53,7 +70,6 @@ public class ApprovalRequestRepository : IApprovalRequestRepository
     {
         string query = $@"SELECT a.Id,
                         a.ApproverId,
-                        a.PositionId,
                         a.LeaveRequestId,
                         a.Status,
                         a.Comment
@@ -70,10 +86,10 @@ public class ApprovalRequestRepository : IApprovalRequestRepository
     public async Task<int> Add(ApprovalRequest approvalRequest)
     {
         string query = $@"INSERT INTO ApprovalRequests
-                        (ApproverId, PositionId, LeaveRequestId, Status, Comment)
+                        (ApproverId, LeaveRequestId, Status, Comment)
                         OUTPUT INSERTED.Id
                         VALUES
-                        (@ApproverId, @PositionId, @LeaveRequestId, @Status, @Comment)";
+                        (@ApproverId, @LeaveRequestId, @Status, @Comment)";
 
         using var connection = _dapperContext.CreateConnection();
 
@@ -87,7 +103,6 @@ public class ApprovalRequestRepository : IApprovalRequestRepository
         string query = $@"UPDATE ApprovalRequests
                         SET
                         ApproverId = @ApproverId,
-                        PositionId = @PositionId,
                         LeaveRequestId = @LeaveRequestId,
                         Status = @Status,
                         Comment = @Comment
@@ -96,6 +111,18 @@ public class ApprovalRequestRepository : IApprovalRequestRepository
         using var connection = _dapperContext.CreateConnection();
 
         await connection.ExecuteAsync(query, approvalRequest);
+    }
+
+    public async Task UpdateStatusByLeaveRequestId(int leaveRequestId, string status)
+    {
+        string query = $@"UPDATE ApprovalRequests
+                        SET
+                        Status = @status
+                        WHERE LeaveRequestId = @leaveRequestId";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        await connection.ExecuteAsync(query, new { leaveRequestId, status });
     }
 
     public async Task DeleteById(int id)

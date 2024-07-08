@@ -107,7 +107,7 @@ public class LeaveRequestController : ControllerBase
         var userId = User.GetUserId();
 
         if (userId == 0) return Unauthorized();
-
+            
         if (userId != leaveRequest.EmployeeId) return BadRequest(new Error("Only owner can cancel leave request"));
 
         if (leaveRequest.Status != LeaveRequestStatuses.Submitted) return BadRequest(new Error("Can cancel only submitted leave request"));
@@ -115,6 +115,8 @@ public class LeaveRequestController : ControllerBase
         leaveRequest.Status = LeaveRequestStatuses.Canceled;
 
         await _leaveRequestRepository.Update(leaveRequest);
+
+        await _approvalRequestRepository.UpdateStatusByLeaveRequestId(leaveRequest.Id, LeaveRequestStatuses.Canceled);
 
         return Ok();
     }
