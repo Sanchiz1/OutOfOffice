@@ -34,7 +34,7 @@ Application for managing projects and employees` leave requests.
    
    Finally, to run the application, execute:
    ```sh
-   dotnet run
+   dotnet run --launch-profile https
 7. Navigate to the Client project directory:
 
    Change your current directory to the CryptoView project folder:
