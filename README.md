@@ -10,13 +10,13 @@ Application for managing projects and employees` leave requests.
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/Sanchiz1/cryptoview.git
+   git clone https://github.com/Sanchiz1/OutOfOffice.git
 
-2. Create SQL Server database by running db_init.sql and update connection string in **appsettings.json** 
+2. Create SQL Server database by running db_init.sql and update connection string in **/src/api/Api/appsettings.json** 
 
 3. Navigate to the API project directory:
 
-   Change your current directory to the CryptoView project folder:
+   Change your current directory to the OutOfOffice project folder:
    ```sh
    cd OutOfOffice/src/api/Api
    
