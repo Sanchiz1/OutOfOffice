@@ -98,7 +98,7 @@ public class LeaveRequestRepository : ILeaveRequestRepository
                         (EmployeeId, AbsenceReason, StartDate, EndDate, Comment, Status)
                         OUTPUT INSERTED.Id
                         VALUES
-                        (@EmployeeId, @AbsenceReason, @EndDate, @EndDate, @Comment, @Status)";
+                        (@EmployeeId, @AbsenceReason, @StartDate, @EndDate, @Comment, @Status)";
 
         using var connection = _dapperContext.CreateConnection();
 

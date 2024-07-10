@@ -65,7 +65,6 @@ export default function UserPage() {
     const fullName = data.get('fullName')!.toString().trim();
     const email = data.get('email')!.toString().trim();
     const subdivision = data.get('subdivision')!.toString().trim();
-    const peoplePartner = data.get('peoplePartner')!.toString().trim();
     const outOfOfficeBalance = data.get('outOfOfficeBalance')!.toString().trim();
 
     const userInput: UpdateUserInput = {
@@ -74,7 +73,7 @@ export default function UserPage() {
       Position: position,
       Subdivision: subdivision,
       Status: status,
-      PeoplePartner: peoplePartner ? parseInt(peoplePartner) : undefined,
+      PeoplePartner: peoplePartnerId,
       OutOfOfficeBalance: outOfOfficeBalance ? parseInt(outOfOfficeBalance) : 0
     }
 

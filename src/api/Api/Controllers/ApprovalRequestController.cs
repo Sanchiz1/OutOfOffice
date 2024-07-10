@@ -1,4 +1,5 @@
 ﻿using Api.Common.Constants;
+using Api.Data.Repositories;
 using Api.Dtos;
 using Api.Extensions;
 using Api.Interfaces;
@@ -14,9 +15,13 @@ namespace Api.Controllers;
 public class ApprovalRequestController : ControllerBase
 {
     private readonly IApprovalRequestRepository _approvalRequestRepository;
-    public ApprovalRequestController(IApprovalRequestRepository approvalRequestRepository)
+    private readonly ILeaveRequestRepository _leaveRequestRepository;
+    private readonly IEmployeeRepository _employeeRepository;
+    public ApprovalRequestController(IApprovalRequestRepository approvalRequestRepository, ILeaveRequestRepository leaveRequestRepository, IEmployeeRepository employeeRepository)
     {
         _approvalRequestRepository = approvalRequestRepository;
+        _leaveRequestRepository = leaveRequestRepository;
+        _employeeRepository = employeeRepository;
     }
 
 
@@ -92,9 +97,27 @@ public class ApprovalRequestController : ControllerBase
 
         if (userId != approvalRequest.ApproverId) return BadRequest(new Error("Only approver can submit request"));
 
+        var leaveRequest = await _leaveRequestRepository.GetById(approvalRequest.LeaveRequestId);
+
+        if (leaveRequest is null) return BadRequest(new Error("Leave request not found"));
+
+        if (leaveRequest.Status == LeaveRequestStatuses.Accepted) return BadRequest(new Error("Leave request already accepted"));
+
         approvalRequest.Status = LeaveRequestStatuses.Submitted;
 
         await _approvalRequestRepository.Update(approvalRequest);
+
+        leaveRequest.Status = LeaveRequestStatuses.Accepted;
+
+        await _leaveRequestRepository.Update(leaveRequest);
+
+        var employee = await _employeeRepository.GetById(leaveRequest.EmployeeId);
+
+        if (employee is null) return BadRequest(new Error("Employee not found"));
+
+        employee.OutOfOfficeBalance -= (int)(leaveRequest.EndDate - leaveRequest.StartDate).TotalDays;
+
+        await _employeeRepository.Update(employee);
 
         return Ok();
     }
