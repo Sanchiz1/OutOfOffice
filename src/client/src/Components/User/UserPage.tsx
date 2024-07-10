@@ -10,7 +10,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { requestEmployeeById, updateUserRequest } from '../../API/employeeRequests';
+import { requestEmployeeById, updateEmployeePassword, updateUserRequest } from '../../API/employeeRequests';
 import { RootState } from '../../Redux/store';
 import { Employee, UpdateUserInput } from '../../Types/Employee';
 import NotFoundPage from '../UtilComponents/NotFoundPage';
@@ -28,6 +28,7 @@ export default function UserPage() {
   const [employee, setEmployee] = useState<Employee>();
   const [userExists, setUserExists] = useState(true);
   const [openEdit, setOpenEdit] = useState(false);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
   let { EmployeeId } = useParams();
   const dispatch = useDispatch();
   const navigator = useNavigate();
@@ -99,6 +100,32 @@ export default function UserPage() {
   const handleStatusChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value);
   };
+
+  
+  const handleSubmitChangePassword = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const password = data.get('password')!.toString().trim();
+
+    if(password.length === 0) return;
+
+    updateEmployeePassword(employee?.id!, password).subscribe({
+      next(value) {
+        enqueueSnackbar(value, {
+          variant: 'success', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center'
+          },
+          autoHideDuration: 1500
+        });
+        setError('');
+        setOpenEdit(false);
+      },
+      error(err) {
+        setError(err.message)
+      },
+    })
+  }
 
   return (
     <>
@@ -250,6 +277,50 @@ export default function UserPage() {
                                           >
                                             <CloseIcon />
                                           </IconButton>
+                                        }
+                                        sx={{ mb: 2, fontSize: 15 }}
+                                      >
+                                        {error}
+                                      </Alert>
+                                    </Collapse>
+                                    <Button
+                                      type="submit"
+                                      fullWidth
+                                      variant="outlined"
+                                    >
+                                      Submit
+                                    </Button>
+                                  </Box>
+                                  <Divider sx={{ my: 2 }} />
+                                </Collapse>
+                                <Divider sx={{ mt: 2 }} />
+                                <Button onClick={() => setOpenChangePassword(!openChangePassword)}>Change password</Button>
+                                <Collapse in={openChangePassword}>
+                                  <Box component="form" onSubmit={handleSubmitChangePassword} noValidate sx={{ mt: 1, mb: 3 }}>
+                                    <TextField
+                                      margin="normal"
+                                      required
+                                      fullWidth
+                                      id="password"
+                                      label="New password"
+                                      name="password"
+                                      type='password'
+                                      autoComplete="off"
+                                      autoFocus
+                                    />
+                                    <Collapse in={error != ''} >
+                                      <Alert
+                                        severity="error"
+                                        action={
+                                          <IconButton
+                                            aria-label="close"
+                                            color="inherit"
+                                            onClick={() => {
+                                              setError('');
+                                            }}
+                                          >
+                                            <CloseIcon />
+                                          </IconButton  >
                                         }
                                         sx={{ mb: 2, fontSize: 15 }}
                                       >

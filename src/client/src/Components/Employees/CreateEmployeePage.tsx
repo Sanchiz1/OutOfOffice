@@ -78,7 +78,7 @@ export default function CreateEmployee() {
         setPosition(event.target.value);
     };
 
-    return (
+    return (        
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <Box
@@ -91,27 +91,27 @@ export default function CreateEmployee() {
                     flexGrow: 1,
                     height: '100vh',
                     overflow: 'auto',
-                    display: 'flex'
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}
             >
                 <Container maxWidth='lg' sx={{
-                    mt: 4, mb: 4
+                    pt: 4,
+                    overflow: 'hidden',
+                    flexGrow: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12} lg={12}>
                             <Typography variant="h5" color="text.secondary" component="p" gutterBottom>
-                                Create leave request
+                                Create employee
                             </Typography>
                             <Divider />
                         </Grid>
                         <Grid item xs={12} md={12} lg={12}>
-                            <Paper sx={{
-                                p: 1,
-                                width: 1,
-                            }}>
-
                                 <Box component="form" onSubmit={handlePostSubmit} noValidate sx={{ mt: 1, display: 'flex', flexDirection: 'column' }}>
-                                    <TextField
+                                <TextField
                                         required
                                         margin="normal"
                                         fullWidth
@@ -213,7 +213,6 @@ export default function CreateEmployee() {
                                         Create
                                     </Button>
                                 </Box>
-                            </Paper>
                         </Grid>
                     </Grid>
                 </Container>

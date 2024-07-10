@@ -87,7 +87,7 @@ export default function CreateProject() {
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12} lg={12}>
                             <Typography variant="h5" color="text.secondary" component="p" gutterBottom>
-                                Create leave request
+                                Create project
                             </Typography>
                             <Divider />
                         </Grid>

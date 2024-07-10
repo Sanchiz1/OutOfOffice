@@ -115,6 +115,20 @@ public class EmployeeController : ControllerBase
         return Ok();
     }
 
+    [HttpPut]
+    [Route("{id}/password")]
+    [Authorize(Roles = Positions.HRManager + "," + Positions.Administrator)]
+    public async Task<ActionResult> UpdateEmployeePassword(int id, [FromBody] UpdateEmployeePasswordDto request)
+    {
+        var employee = await _employeeRepository.GetById(id);
+
+        if (employee is null) return NotFound();
+
+        await _employeeRepository.UpdatePassword(employee.Id, _hashingService.ComputeHash(request.Password));
+
+        return Ok();
+    }
+
     [HttpPost]
     [Authorize(Roles = Positions.HRManager + "," + Positions.Administrator)]
     public async Task<ActionResult> CreateEmployee([FromBody] CreateEmployeeDto request)
@@ -132,7 +146,7 @@ public class EmployeeController : ControllerBase
             Position = request.Position,
             PeoplePartner = request.PeoplePartner,
             OutOfOfficeBalance = request.OutOfOfficeBalance,
-            Password = request.password
+            Password = _hashingService.ComputeHash(request.password)
         };
 
         await _employeeRepository.Add(employee);

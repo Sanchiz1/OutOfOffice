@@ -223,6 +223,18 @@ public class EmployeeRepository : IEmployeeRepository
         await connection.ExecuteAsync(query, employee);
     }
 
+    public async Task UpdatePassword(int id, string password)
+    {
+        string query = $@"UPDATE Employees
+                        SET
+                        Password = @password
+                        WHERE Id = @id";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        await connection.ExecuteAsync(query, new { id, password});
+    }
+
     public async Task DeleteById(int id)
     {
         string query = $@"DELETE FROM Employees

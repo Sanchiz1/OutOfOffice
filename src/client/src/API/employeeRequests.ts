@@ -47,3 +47,12 @@ export function updateUserRequest(id: number, UserInput: UpdateUserInput) {
         })
     );
 }
+
+export function updateEmployeePassword(id: number, password: string) {
+    return GetAjaxObservable(`/employee/${id}/password`, "put", true, {'Content-Type': 'application/json'}, false, 
+        { "Password": password}).pipe(
+        map(() => {
+            return "Password updated successfully";
+        })
+    );
+}

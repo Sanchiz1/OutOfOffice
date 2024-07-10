@@ -23,6 +23,7 @@ public interface IEmployeeRepository
     Task<int> Add(Employee position);
 
     Task Update(Employee position);
+    Task UpdatePassword(int id, string password);
 
     Task DeleteById(int id);
 }
