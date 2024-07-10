@@ -38,10 +38,10 @@ public class ProjectController : ControllerBase
     }
 
     [HttpGet]
-    [Route("employee/{id}")]
-    public async Task<IEnumerable<Project>> GeEmployeeProjects(int id, int take, int skip, string orderBy, string order = "ASC")
+    [Route("employee/{employeeId}")]
+    public async Task<IEnumerable<Project>> GeEmployeeProjects(int employeeId, int take, int skip, string orderBy, string order = "ASC")
     {
-        return await _projectRepository.Get(skip, take, orderBy, order);
+        return await _projectRepository.GetByEmployee(employeeId , skip, take, orderBy, order);
     }
 
     [HttpPost]

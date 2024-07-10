@@ -235,18 +235,22 @@ export default function ProjectPage() {
                                                     </>
                                                 }
                                             </Paper>
-                                            <Box sx={{ mt: 3, width: 'fit-content', display: 'flex', flexDirection: 'row' }}>
-                                                <Button
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    onClick={() => navigator("/project/" + project.id + "/add")}
-                                                >
-                                                    AddUser
-                                                </Button>
-                                            </Box>
+                                            {(User.position === "Administrator" || project.projectManagerId === User.id) &&
+                                                <Box sx={{ mt: 3, width: 'fit-content', display: 'flex', flexDirection: 'row' }}>
+                                                    <Button
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        onClick={() => navigator("/project/" + project.id + "/add")}
+                                                    >
+                                                        AddUser
+                                                    </Button>
+                                                </Box>
+                                            }
                                         </Grid>
                                     </Grid>
-                                    <ProjectEmployeesDataTable ProjectId={project.id}></ProjectEmployeesDataTable>
+                                    {(User.position === "Administrator" || project.projectManagerId === User.id) &&
+                                        <ProjectEmployeesDataTable ProjectId={project.id}></ProjectEmployeesDataTable>
+                                    }
                                 </Container>
                             </Box>
                         </Box>

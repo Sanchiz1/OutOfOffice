@@ -8,6 +8,10 @@ export function requestProjects(offset: Number, next: Number, orderBy: string = 
     return GetAjaxObservable<Project[]>(`/project?take=${next}&skip=${offset}&orderBy=${orderBy}&order=${order}`, "GET", false, {'Content-Type': 'application/json'}, false)
 }
 
+export function requestEmployeeProjects(employeeId: number, offset: Number, next: Number, orderBy: string = "Id", order: string = "ASC") {
+    return GetAjaxObservable<Project[]>(`/project/employee/${employeeId}?take=${next}&skip=${offset}&orderBy=${orderBy}&order=${order}`, "GET", false, {'Content-Type': 'application/json'}, false)
+}
+
 export function getProjectById(id: Number) {
     return GetAjaxObservable<Project>(`/project/${id}`, "GET", false, {'Content-Type': 'application/json'}, false).pipe(
         catchError((error) => {

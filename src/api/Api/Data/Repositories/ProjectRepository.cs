@@ -32,6 +32,35 @@ public class ProjectRepository : IProjectRepository
         return result.ToList();
     }
 
+    public async Task<List<Project>> GetByEmployee(int employeeId, int skip, int take, string orderBy, string order = "ASC")
+    {
+        string query = $@"SELECT p.Id,
+                        p.ProjectType,
+                        p.StartDate,
+                        p.EndDate,
+                        p.ProjectManagerId,
+                        p.Comment,
+                        p.Status
+                        FROM EmployeeProject pe
+                        INNER JOIN Projects p ON p.Id = pe.ProjectId
+                        WHERE pe.EmployeeId = @employeeId
+                        GROUP BY p.Id,
+                        p.ProjectType,
+                        p.StartDate,
+                        p.EndDate,
+                        p.ProjectManagerId,
+                        p.Comment,
+                        p.Status
+                        ORDER BY {orderBy} {order}
+                        OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.QueryAsync<Project>(query, new { employeeId, skip, take });
+
+        return result.ToList();
+    }
+
     public async Task<List<Project>> GetAll(string orderBy, string order = "ASC")
     {
         string query = $@"SELECT p.Id,

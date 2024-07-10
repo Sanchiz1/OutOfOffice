@@ -6,6 +6,7 @@ namespace Api.Interfaces;
 public interface IProjectRepository
 {
     Task<List<Project>> Get(int skip, int take, string orderBy, string order = "ASC");
+    Task<List<Project>> GetByEmployee(int employeeId, int skip, int take, string orderBy, string order = "ASC");
 
     Task<List<Project>> GetAll(string orderBy, string order = "ASC");
 
