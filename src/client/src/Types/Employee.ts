@@ -20,7 +20,7 @@ export interface UserRegistration {
     password: string,
 }
 
-export interface UserInput {
+export interface UpdateUserInput {
     FullName: string,
     Email: string,
     Position: string,
@@ -28,4 +28,15 @@ export interface UserInput {
     Status: string,
     PeoplePartner?: number,
     OutOfOfficeBalance: number
+}
+
+export interface CreateUserInput {
+    FullName: string,
+    Email: string,
+    Position: string,
+    Subdivision: string,
+    Status: string,
+    PeoplePartner?: number,
+    OutOfOfficeBalance: number,
+    Password: string
 }

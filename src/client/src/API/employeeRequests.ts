@@ -1,5 +1,5 @@
 import { catchError, map, of } from "rxjs";
-import { Employee, UserInput } from "../Types/Employee";
+import { CreateUserInput, Employee, UpdateUserInput } from "../Types/Employee";
 import { GetAjaxObservable } from "./APIUtils";
 import NotFoundError from "../Types/NotFoundError";
 
@@ -32,18 +32,18 @@ export function requestAccount() {
     );
 }
 
-export function createUserRequest(UserInput: UserInput) {
-    return GetAjaxObservable(`/account/register`, "POST", false, {'Content-Type': 'application/json'}, false, UserInput).pipe(
+export function createEmployeeRequest(UserInput: CreateUserInput) {
+    return GetAjaxObservable(`/employee`, "POST", false, {'Content-Type': 'application/json'}, false, UserInput).pipe(
         map(() => {
-            return "User created successfully";
+            return "Employee created successfully";
         })
     );
 }
 
-export function updateUserRequest(id: number, UserInput: UserInput) {
+export function updateUserRequest(id: number, UserInput: UpdateUserInput) {
     return GetAjaxObservable(`/employee/${id}`, "put", true, {'Content-Type': 'application/json'}, false, UserInput).pipe(
         map(() => {
-            return "User updated successfully";
+            return "Employee updated successfully";
         })
     );
 }

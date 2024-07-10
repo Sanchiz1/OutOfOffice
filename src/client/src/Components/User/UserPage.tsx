@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { requestEmployeeById, updateUserRequest } from '../../API/employeeRequests';
 import { RootState } from '../../Redux/store';
-import { Employee, UserInput } from '../../Types/Employee';
+import { Employee, UpdateUserInput } from '../../Types/Employee';
 import NotFoundPage from '../UtilComponents/NotFoundPage';
 
 const validUsernamePattern = /^[a-zA-Z0-9_]+$/;
@@ -65,7 +65,7 @@ export default function UserPage() {
     const peoplePartner = data.get('peoplePartner')!.toString().trim();
     const outOfOfficeBalance = data.get('outOfOfficeBalance')!.toString().trim();
 
-    const userInput: UserInput = {
+    const userInput: UpdateUserInput = {
       FullName: fullName,
       Email: email,
       Position: position,

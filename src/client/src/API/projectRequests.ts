@@ -1,5 +1,5 @@
 import { catchError, map, of } from "rxjs";
-import { Employee, UserInput } from "../Types/Employee";
+import { Employee, UpdateUserInput } from "../Types/Employee";
 import { GetAjaxObservable } from "./APIUtils";
 import NotFoundError from "../Types/NotFoundError";
 import { Project } from "../Types/Project";

@@ -135,7 +135,7 @@ public class EmployeeController : ControllerBase
             Password = request.password
         };
 
-        await _employeeRepository.Update(employee);
+        await _employeeRepository.Add(employee);
 
         return Ok();
     }

@@ -20,6 +20,7 @@ import ProjectPage from './Projects/ProjectPage';
 import AddToProjectPage from './Projects/AddToProjectPage';
 import ApprovalRequestsPage from './ApprovalRequests/ApprovalRequestsPage';
 import ApprovalRequestPage from './ApprovalRequests/ApprovalRequestPage';
+import CreateEmployee from './Employees/CreateEmployeePage';
 
 const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void) => createBrowserRouter([
     {
@@ -37,6 +38,11 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
             {
                 path: "/employees",
                 element: <EmployeesPage />, 
+                loader: async () => CheckRole(SignInErrorAction, PermissionErrorAction, ["HR Manager", "Administrator"])
+            },
+            {
+                path: "/createEmployee",
+                element: <CreateEmployee />, 
                 loader: async () => CheckRole(SignInErrorAction, PermissionErrorAction, ["HR Manager", "Administrator"])
             },
             {
