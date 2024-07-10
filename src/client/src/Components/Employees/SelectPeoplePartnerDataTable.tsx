@@ -18,10 +18,10 @@ import { visuallyHidden } from '@mui/utils';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { requestEmployeeProjects, requestProjects } from '../../API/projectRequests';
-import { GetDateString } from '../../Helpers/DateFormatHelper';
+import { requestSearchedEmployees } from '../../API/employeeRequests';
 import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
-import { Project } from '../../Types/Project';
+import { Employee } from '../../Types/Employee';
+import { ShowFailure } from '../../Helpers/SnackBarHelper';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -49,47 +49,53 @@ function getComparator<Key extends keyof any>(
 
 interface HeadCell {
     disablePadding: boolean;
-    id: keyof Project;
+    id: keyof Employee;
     label: string;
     numeric: boolean;
 }
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'id',
+        id: 'fullName',
         numeric: false,
         disablePadding: false,
-        label: 'Id',
+        label: 'Full Name',
     },
     {
-        id: 'projectType',
+        id: 'email',
         numeric: false,
         disablePadding: false,
-        label: 'Project Type',
+        label: 'Email',
     },
     {
-        id: 'startDate',
+        id: 'position',
         numeric: false,
         disablePadding: false,
-        label: 'Start Date',
+        label: 'Position',
     },
     {
-        id: 'endDate',
-        numeric: false,
+        id: 'subdivision',
+        numeric: true,
         disablePadding: false,
-        label: 'End Date',
+        label: 'Subdivision',
+    },
+    {
+        id: 'outOfOfficeBalance',
+        numeric: true,
+        disablePadding: false,
+        label: 'Out of office balance',
     },
     {
         id: 'status',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'Status',
-    }
+    },
 ];
 
 interface EnhancedTableProps {
     numSelected: number;
-    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Project) => void;
+    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Employee) => void;
     onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
     order: Order;
     orderBy: string;
@@ -100,7 +106,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
         props;
     const createSortHandler =
-        (property: keyof Project) => (event: React.MouseEvent<unknown>) => {
+        (property: keyof Employee) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
         };
 
@@ -160,26 +166,45 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 id="tableTitle"
                 component="div"
             >
-                Projects
+                Employees
             </Typography>
+            <Box component="form" sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }} onSubmit={(e) => {
+                e.preventDefault();
+                handleSearch(search);
+            }}>
+                <TextField
+                    size="small"
+                    variant="outlined"
+                    value={search}
+                    autoComplete='off'
+                    onChange={(e) => setSearch(e.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon />
+                            </InputAdornment>
+                        )
+                    }}
+                />
+            </Box>
         </Toolbar>
     );
 }
 
-interface EmployeeProjectsDataTableProps{
-    employeeId: number
+interface SelectPeoplePartnerDataTableProps {
+    onSelect: (id: number) => void;
 }
 
-export default function EmployeeProjectsDataTable(props: EmployeeProjectsDataTableProps) {
-    const { employeeId } = props;
+export default function SelectPeoplePartnerDataTable(props: SelectPeoplePartnerDataTableProps) {
+    const { onSelect } = props;
     const dispatch = useDispatch();
     const navigator = useNavigate();
 
     const [update, setUpdate] = React.useState<boolean>(false);
 
-    const [rows, setRows] = React.useState<Project[]>([]);
+    const [rows, setRows] = React.useState<Employee[]>([]);
     const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Project>('id');
+    const [orderBy, setOrderBy] = React.useState<keyof Employee>('fullName');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -187,7 +212,7 @@ export default function EmployeeProjectsDataTable(props: EmployeeProjectsDataTab
     const [search, setSearch] = React.useState<string>('');
 
     React.useEffect(() => {
-        requestEmployeeProjects(employeeId, page * rowsPerPage, rowsPerPage, orderBy, order).subscribe({
+        requestSearchedEmployees(page * rowsPerPage, rowsPerPage, search, orderBy, order).subscribe({
             next(value) {
                 setRows(value)
             },
@@ -200,7 +225,7 @@ export default function EmployeeProjectsDataTable(props: EmployeeProjectsDataTab
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof Project,
+        property: keyof Employee,
     ) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -274,14 +299,21 @@ export default function EmployeeProjectsDataTable(props: EmployeeProjectsDataTab
                                             scope="row"
                                             padding="normal"
                                         >
-                                            {row.id}
+                                            {row.fullName}
                                         </TableCell>
-                                        <TableCell align="left">{row.projectType}</TableCell>
-                                        <TableCell align="left">{GetDateString(new Date(row.startDate))}</TableCell>
-                                        <TableCell align="left">{row.endDate ? GetDateString(new Date(row.endDate)) : ""}</TableCell>
+                                        <TableCell align="left">{row.email}</TableCell>
+                                        <TableCell align="left">{row.position}</TableCell>
+                                        <TableCell align="left">{row.subdivision}</TableCell>
+                                        <TableCell align="left">{row.outOfOfficeBalance}</TableCell>
                                         <TableCell align="left">{row.status}</TableCell>
                                         <TableCell align="left">
-                                            <Button size='small' onClick={() => navigator("/project/" + row.id)}>Visit</Button>
+                                            <Button size='small' onClick={() => {
+                                                if(!["HR Manager", "Administrator"].includes(row.position)){
+                                                    ShowFailure("Can add HR Manager or Administrator");
+                                                    return;
+                                                }
+                                                onSelect(row.id)
+                                            }}>Select</Button>
                                         </TableCell>
                                     </TableRow>
                                 );

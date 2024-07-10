@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Alert, Collapse, Container, CssBaseline, IconButton, LinearProgress, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Alert, Collapse, Container, CssBaseline, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, LinearProgress, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -14,6 +14,7 @@ import { requestEmployeeById, updateEmployeePassword, updateUserRequest } from '
 import { RootState } from '../../Redux/store';
 import { Employee, UpdateUserInput } from '../../Types/Employee';
 import NotFoundPage from '../UtilComponents/NotFoundPage';
+import SelectPeoplePartnerDataTable from '../Employees/SelectPeoplePartnerDataTable';
 
 const validUsernamePattern = /^[a-zA-Z0-9_]+$/;
 const validEmailPattern = /^(?=.{0,64}$)[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -46,6 +47,7 @@ export default function UserPage() {
         setEmployee(user);
         setPosition(user?.position!);
         setStatus(user?.status!);
+        setPeaoplePartnerId(user.peoplePartner);
       },
       error(err) {
       },
@@ -101,13 +103,13 @@ export default function UserPage() {
     setStatus(event.target.value);
   };
 
-  
+
   const handleSubmitChangePassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const password = data.get('password')!.toString().trim();
 
-    if(password.length === 0) return;
+    if (password.length === 0) return;
 
     updateEmployeePassword(employee?.id!, password).subscribe({
       next(value) {
@@ -126,6 +128,19 @@ export default function UserPage() {
       },
     })
   }
+
+  // select people partner
+  
+  const [peoplePartnerId, setPeaoplePartnerId] = useState(employee?.peoplePartner);
+  const [openSelectPeoplePartner, setOpenSelectPeoplePartner] = useState(false);
+
+  const handleClickOpenSelectPeoplePartnerOpen = () => {
+    setOpenSelectPeoplePartner(true);
+  };
+
+  const handleCloseSelectPeoplePartner = () => {
+    setOpenSelectPeoplePartner(false);
+  };
 
   return (
     <>
@@ -242,17 +257,8 @@ export default function UserPage() {
                                       autoFocus
                                       defaultValue={employee.subdivision}
                                     />
-                                    <TextField
-                                      margin="normal"
-                                      required
-                                      fullWidth
-                                      id="peoplePartner"
-                                      label="People Partner"
-                                      name="peoplePartner"
-                                      autoComplete="off"
-                                      autoFocus
-                                      defaultValue={employee.peoplePartner}
-                                    />
+                                    <Button variant='outlined'
+                                    onClick={handleClickOpenSelectPeoplePartnerOpen}>People partner: {peoplePartnerId ? peoplePartnerId : "no partner"}</Button>
                                     <TextField
                                       margin="normal"
                                       required
@@ -345,6 +351,22 @@ export default function UserPage() {
                   </Grid>
                 </Container>
               </Box>
+              <Dialog
+                open={openSelectPeoplePartner}
+                onClose={handleCloseSelectPeoplePartner}
+                fullWidth
+                maxWidth="lg"
+              >
+                <DialogTitle>
+                  {"Select people partner"}
+                </DialogTitle>
+                <DialogContent>
+                  <SelectPeoplePartnerDataTable onSelect={(id) => {
+                    setPeaoplePartnerId(id);
+                    handleCloseSelectPeoplePartner();
+                  }}></SelectPeoplePartnerDataTable>
+                </DialogContent>
+              </Dialog>
             </Box>
             :
             <Box sx={{ width: '100%' }}>

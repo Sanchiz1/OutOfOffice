@@ -162,25 +162,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             >
                 Projects
             </Typography>
-            <Box component="form" sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }} onSubmit={(e) => {
-                e.preventDefault();
-                handleSearch(search);
-            }}>
-                <TextField
-                    size="small"
-                    variant="outlined"
-                    value={search}
-                    autoComplete='off'
-                    onChange={(e) => setSearch(e.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon />
-                            </InputAdornment>
-                        )
-                    }}
-                />
-            </Box>
         </Toolbar>
     );
 }
