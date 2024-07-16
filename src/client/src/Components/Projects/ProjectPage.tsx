@@ -100,11 +100,16 @@ export default function ProjectPage() {
                                     flexGrow: 1,
                                     height: '100vh',
                                     overflow: 'auto',
-                                    display: 'flex'
+                                    display: 'flex',
+                                    flexDirection: 'column'
                                 }}
                             >
                                 <Container maxWidth='lg' sx={{
-                                    mt: 4, mb: 4
+                                    mt: 4, mb: 4,
+                                    overflow: 'hidden',
+                                    flexGrow: 1,
+                                    display: 'flex',
+                                    flexDirection: 'column'
                                 }}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={12} md={12} lg={12}>
@@ -242,7 +247,7 @@ export default function ProjectPage() {
                                                         variant="outlined"
                                                         onClick={() => navigator("/project/" + project.id + "/add")}
                                                     >
-                                                        AddUser
+                                                        Add User
                                                     </Button>
                                                 </Box>
                                             }

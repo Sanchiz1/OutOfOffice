@@ -25,7 +25,6 @@ export default function ApprovalRequestsPage() {
             <Container maxWidth='lg' sx={{
                 mt: 4, mb: 4, width: 1
             }}>
-                <Button sx={{ mb: 3 }} onClick={() => navigate("/createProject")}>Create project</Button>
                 <Grid container spacing={0}>
                     <Grid item xs={12}>
                         <ApproverApprovalRequestsDataTable approverId={User.id} ></ApproverApprovalRequestsDataTable>
